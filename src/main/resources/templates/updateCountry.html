@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Update Country</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<div th:replace="navbar.html"></div>
+<body>
+<div class="container">
+  <h1 class="mt-5">Update Country</h1>
+
+  <form th:action="@{/country/update}" th:object="${country}" method="post" enctype="multipart/form-data">
+
+    <input type="hidden" th:field="*{id}" />
+
+    <div class="form-group">
+      <label for="name">Country Name:</label>
+      <input type="text" class="form-control" id="name" th:field="*{name}" required="true" />
+    </div>
+
+    <div class="form-group">
+      <label for="flag">Country Flag:</label>
+      <input type="file" class="form-control-file" id="flag" name="flag" />
+    </div>
+    <div class="form-group">
+      <label for="continentSelect">Select Continent:</label>
+      <select class="form-control" id="continentSelect" name="continent">
+        <option th:each="continent : ${continents}" th:value="${continent}" th:text="${continent.name()}"></option>
+      </select>
+    </div>
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary">Update</button>
+      <a href="/country/getAll" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+</body>
+</html>

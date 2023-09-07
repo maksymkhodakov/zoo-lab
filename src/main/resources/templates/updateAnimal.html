@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Animal</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h1>Update Animal</h1>
+    <form action="/animal/update" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="id" th:value="${animal.id}" />
+
+        <div class="form-group">
+            <label for="nameInput">Name of Animal:</label>
+            <input type="text" class="form-control" id="nameInput" name="nameInput"
+                   th:value="${animal.name}" required="true">
+        </div>
+
+        <div class="form-group">
+            <label for="kindSelect">Select Kind of Animal:</label>
+            <select class="form-control" id="kindSelect" name="kindAnimal">
+                <option value="" disabled>Select a kind</option>
+                <option th:each="kind : ${kind}" th:value="${kind}" th:text="${kind}"
+                        th:selected="${kind == animal.kindAnimal}"></option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="venomousCheckbox">Venomous:</label>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="venomousCheckbox" name="venomous"   th:checked="${animal.venomous}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="supplySelect">Select Type of Power Supply:</label>
+            <select class="form-control" id="supplySelect" name="typePowerSupply">
+                <option value="" disabled>Select a type of power supply</option>
+                <option th:each="supply : ${supply}" th:value="${supply}" th:text="${supply}"
+                        th:selected="${supply == animal.typePowerSupply}"></option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="photoInput">Animal Photo:</label>
+            <input type="file" class="form-control-file" id="photoInput" name="photo" accept="image/*">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a href="/animal/getAll" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+</body>
+</html>

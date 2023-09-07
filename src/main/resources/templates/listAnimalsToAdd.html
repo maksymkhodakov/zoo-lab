@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Animals to Zoo</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h1>Add Animals to Zoo</h1>
+    <div class="row">
+        <form th:action="@{'/zoo/addAnimal'}" method="post">
+            <input type="hidden" name="zooId" th:value="${zooId}" />
+            <table class="table table-bordered">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Animal Name</th>
+                    <th scope="col">Kind</th>
+                    <th scope="col">Venomous</th>
+                    <th scope="col">Power Supply</th>
+                    <th scope="col">Photo</th>
+                    <th scope="col">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="animal : ${listAnimals}">
+                    <td th:text="${animal.name}"></td>
+                    <td th:text="${animal.kindAnimal}"></td>
+                    <td th:text="${animal.venomous ? 'Yes' : 'No'}"></td>
+                    <td th:text="${animal.typePowerSupply}"></td>
+                    <td>
+                        <img th:src="'data:image/jpeg;base64,' + ${animal.generateBase64Image()}"
+                             class="card-img-top" alt="Animal Image" style="max-height: 200px; object-fit: cover;">
+                    </td>
+                    <td>
+                        <button type="submit" name="animalId" th:value="${animal.id}" class="btn btn-primary">Add</button>
+                    </td>
+                </tr>
+                <div class="form-group">
+                    <a class="btn btn-outline-success" th:href="@{'/zoo/animals/' + ${zooId}}">Cancel</a>
+                </div>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+</body>
+</html>

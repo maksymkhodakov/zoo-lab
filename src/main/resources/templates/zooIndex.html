@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>List of zoo</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link >
+    <div th:replace="navbar.html"></div>
+</head>
+<body>
+<div class="container">
+    <h1>List of Zoo</h1>
+    <a class="btn btn-primary" th:href="@{/zoo/create}"> Add zoo </a>
+<table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+    <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Square</th>
+        <th scope="col">Name of Location</th>
+        <th scope="col">Flag of Location</th>
+        <th scope="col">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="zoo : ${zooList}">
+        <td th:text="${zoo.getName()}"></td>
+        <td th:text="${zoo.getSquare()}"></td>
+        <td>
+            <span th:if="${zoo.getLocation() != null}" th:text="${zoo.getLocation().getName()}"></span>
+        </td>
+        <td>
+            <span th:if="${zoo.getLocation() != null && zoo.getLocation().getFlag() != null}">
+                <img th:src="'data:image/jpeg;base64,' + ${zoo.getLocation().generateBase64Image()}" width="200" height="150" alt="Image" />
+            </span>
+        </td>
+        <td>
+            <div class="btn-group">
+                <form th:action="@{/zoo/delete}" method="post">
+                    <input type="hidden" name="id" th:value="${zoo.id}" />
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+                <a class="btn btn-info" th:href="@{'/zoo/update/' + ${zoo.id}}">Edit</a>
+                <div class="form-group">
+                    <a class="btn btn-outline-success" th:href="@{'/zoo/animals/' + ${zoo.id}}">Countries</a>
+                </div>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</div>
+</body>

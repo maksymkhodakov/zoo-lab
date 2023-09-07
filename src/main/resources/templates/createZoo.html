@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<div th:replace="navbar.html"></div>
+<body>
+<div class="container mt-5">
+  <h1>Create new country</h1>
+  <form action="/zoo/create" method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+      <label for="textInput">Name of zoo:</label>
+      <input type="text" class="form-control" id="textInput" name="zooInput" placeholder="Enter the text" required="true">
+    </div>
+    <div class="form-group">
+      <label for="textInput">Square of zoo:</label>
+      <input type="number" class="form-control" id="numberInput" name="squareInput" placeholder="Enter the text" required="true" min="1">
+    </div>
+    <div class="form-group">
+      <label for="countrySelect">Select Country:</label>
+      <select class="form-control" id="countrySelect" name="countryId">
+        <option th:each="country : ${listOfCountries}"
+                th:value="${country.id}" th:text="${country.name}">
+
+        </option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+  <div class="form-group">
+    <a href="/zoo/getAll" class="btn btn-secondary">Cancel</a>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>List of Animals</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <div th:replace="navbar.html"></div>
+</head>
+<body>
+<div class="container">
+  <h1>List of Animals</h1>
+  <a class="btn btn-primary" th:href="@{/animal/create}">Add Animal</a>
+  <table class="table table-bordered">
+    <thead class="thead-dark">
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Kind of Animal</th>
+      <th scope="col">Venomous</th>
+      <th scope="col">Type of Power Supply</th>
+      <th scope="col">Photo</th>
+      <th scope="col">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="animal : ${lostAnimals}">
+      <td th:text="${animal.name}"></td>
+      <td th:text="${animal.kindAnimal}"></td>
+      <td th:text="${animal.venomous ? 'Yes' : 'No'}"></td>
+      <td th:text="${animal.typePowerSupply}"></td>
+      <td>
+        <img th:if="${animal.photo != null}" th:src="'data:image/jpeg;base64,' + ${animal.generateBase64Image()}" width="200" height="150" alt="Animal Photo" />
+      </td>
+      <td>
+        <form th:action="@{/animal/delete}" method="post">
+          <input type="hidden" name="id" th:value="${animal.id}" />
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+        <a class="btn btn-info" th:href="@{'/animal/update/' + ${animal.id}}">Edit</a>
+        <div class="form-group">
+          <a class="btn btn-outline-success" th:href="@{'/animal/countries/' + ${animal.id}}">Countries</a>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Zoo</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h1>Update Zoo</h1>
+    <form action="/zoo/update" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="id" th:value="${zoo.id}" />
+
+        <div class="form-group">
+            <label for="nameInput">Name of Zoo:</label>
+            <input type="text" class="form-control" id="nameInput" name="nameInput"
+                   th:value="${zoo.name}" required="true">
+        </div>
+
+        <div class="form-group">
+            <label for="squareInput">Square of Zoo:</label>
+            <input type="number" class="form-control" id="squareInput" name="squareInput"
+                   th:value="${zoo.square}" required="true" min="1">
+        </div>
+
+        <div class="form-group">
+            <label for="countrySelect">Select Country:</label>
+            <select class="form-control" id="countrySelect" name="countryId">
+                <option value="">Select a country</option>
+                <option th:each="country : ${listOfCountries}" th:value="${country.getId()}" th:text="${country.name}"
+                        th:selected="${country.id == zoo.getLocation().getId()}"></option>
+                </th:each>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a href="/zoo/getAll" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+</body>
+</html>

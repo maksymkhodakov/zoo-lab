@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>List of Countries</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link >
+    <div th:replace="navbar.html"></div>
+</head>
+<body>
+<div class="container">
+    <h1>List of Countries</h1>
+    <a class="btn btn-primary" th:href="@{/country/create}">Add country</a>
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Continent</th>
+            <th scope="col">Flag</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="country : ${listOfCountries}">
+            <td th:text="${country.name}"></td>
+            <td th:text="${country.continent}"></td>
+            <td>
+                <img th:if="${country.flag != null}" th:src="'data:image/jpeg;base64,' + ${country.generateBase64Image()}" width="200" height="150" alt="Image" />
+            </td>
+            <td>
+                <form th:action="@{/country/delete}" method="post">
+                    <input type="hidden" name="id" th:value="${country.id}" />
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+                <a class="btn btn-info" th:href="@{'/country/update/' + ${country.id}}">Edit</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

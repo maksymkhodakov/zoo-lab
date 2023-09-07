@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create New Animal</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <div th:replace="navbar.html"></div>
+</head>
+<body>
+<div class="container mt-5">
+  <h1>Create New Animal</h1>
+  <form action="/animal/create" method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+      <label for="nameInput">Name of Animal:</label>
+      <input type="text" class="form-control" id="nameInput" name="nameInput" placeholder="Enter the name" required="true">
+    </div>
+    <div class="form-group">
+      <label for="kindSelect">Select Kind of Animal:</label>
+      <select class="form-control" id="kindSelect" name="kindAnimal">
+        <option th:each="kind : ${kind}" th:value="${kind}" th:text="${kind}" required="true"></option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="venomousCheckbox">Venomous:</label>
+      <div class="form-check">
+        <input type="checkbox" class="form-check-input" id="venomousCheckbox" name="venomous" >
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="supplySelect">Select Type of Power Supply:</label>
+      <select class="form-control" id="supplySelect" name="typePowerSupply">
+        <option th:each="supply : ${supply}" th:value="${supply}" th:text="${supply}" required="true"></option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="photoInput">Animal Photo:</label>
+      <input type="file" class="form-control-file" id="photoInput" name="photo" accept="image/*" required="true">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+  <div class="form-group">
+    <a href="/animal/getAll" class="btn btn-secondary">Cancel</a>
+  </div>
+</div>
+</body>
+</html>
