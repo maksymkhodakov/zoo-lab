@@ -5,6 +5,7 @@ This project is considered to be a combination of different technologies and app
 * [Installation](#installation)
 * [Containerization](#containerization)
 * [Run without docker](#runwithoutdocker)
+* [Start using](#start-using)
 
 ---
 ### Installation
@@ -32,3 +33,10 @@ Or run maven command:
 ```
 mvn spring-boot:run -DDB_HOST=localhost -Dspring.profiles.active=dev
 ```
+---
+### Start using
+Despite using application via containerization, you can always try to use Azure:
+```
+Azure link: https://zoo-lab.azurewebsites.net
+```
+NOTE: In order not to spend subscription money, the app via Azure can be turned off.
