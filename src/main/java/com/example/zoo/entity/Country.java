@@ -1,6 +1,8 @@
 package com.example.zoo.entity;
 
+import com.example.zoo.converters.CoordinatesConverter;
 import com.example.zoo.enums.Continent;
+import com.example.zoo.integratons.maps.domain.dto.Coordinates;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,4 +29,7 @@ public class Country extends TimestampEntity {
 
     @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
     private List<Zoo> zoos = new ArrayList<>();
+
+    @Convert(converter = CoordinatesConverter.class)
+    private Coordinates coordinates;
 }
