@@ -42,10 +42,9 @@ public class ZooRestController {
     }
 
     @PostMapping("/create")
-    public ResponseDTO<Void> create(@RequestPart("data") ZooData zooData,
-                                    @RequestPart("countryId") Long countryId) {
+    public ResponseDTO<Void> create(@RequestPart("data") ZooData zooData) {
         try {
-            zooService.save(zooData, countryId);
+            zooService.save(zooData);
         } catch (OperationException e) {
             return ResponseDTO.error(e.getMessage());
         }
@@ -54,10 +53,9 @@ public class ZooRestController {
 
     @PutMapping("/update")
     public ResponseDTO<Void> update(@RequestPart("id") Long id,
-                                    @RequestPart("data") ZooData zooData,
-                                    @RequestPart("countryId") Long countryId) {
+                                    @RequestPart("data") ZooData zooData) {
         try {
-            zooService.update(id, zooData, countryId);
+            zooService.update(id, zooData);
         } catch (OperationException e) {
             return ResponseDTO.error(e.getMessage());
         }

@@ -2,15 +2,21 @@
 This project is considered to be a combination of different technologies and approaches in modern software development.
 
 # Table of contents
+* [Google drive](#google-drive)
+* [Postman](#postman)
 * [Installation](#installation)
 * [Containerization](#containerization)
 * [Run without docker](#runwithoutdocker)
 * [Start using](#start-using)
-* [Google drive](#google-drive)
 
 ---
 ### Google Drive
 This Google Drive is used to store all videos regarding all phases: [link](https://drive.google.com/drive/folders/1fBpfP7I5tSagGTB_iIcAeFuXVp8mpLth?usp=sharing)
+
+---
+### Postman
+For automatic testing of WebAPI is recommended to use Postman.
+To recreate a collection in your Postman app, use [this](https://drive.google.com/file/d/12LD66lorETfunYp6czNcedUubCvnTrcH/view) json file import collection with all appropriate automatic API tests.
 
 ---
 ### Installation

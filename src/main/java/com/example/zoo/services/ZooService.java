@@ -13,9 +13,9 @@ public interface ZooService {
 
     Page<ZooDTO> getAll(SearchDTO searchDTO);
 
-    void save(ZooData zooData, Long countryId);
+    void save(ZooData zooData);
 
-    void update(Long id, ZooData zooData, Long countryId);
+    void update(Long id, ZooData zooData);
 
     ZooDTO getById(Long id);
 
