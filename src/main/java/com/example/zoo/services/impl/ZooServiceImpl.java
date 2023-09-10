@@ -48,8 +48,8 @@ public class ZooServiceImpl implements ZooService {
 
     @Override
     @Transactional
-    public void save(ZooData zooData, Long countryId) {
-        final var country = countryRepository.findById(countryId)
+    public void save(ZooData zooData) {
+        final var country = countryRepository.findById(zooData.getLocationId())
                 .orElseThrow(() -> new OperationException(ApiErrors.COUNTRY_NOT_FOUND));
         final var zoo = ZooMapper.dataToEntity(zooData, country);
         zooRepository.saveAndFlush(zoo);
@@ -58,10 +58,10 @@ public class ZooServiceImpl implements ZooService {
 
     @Override
     @Transactional
-    public void update(Long id, ZooData zooData, Long countryId) {
+    public void update(Long id, ZooData zooData) {
         final var zoo = zooRepository.findById(id)
                 .orElseThrow(() -> new OperationException(ApiErrors.ZOO_NOT_FOUND));
-        final var country = countryRepository.findById(countryId)
+        final var country = countryRepository.findById(zooData.getLocationId())
                 .orElseThrow(() -> new OperationException(ApiErrors.COUNTRY_NOT_FOUND));
         zoo.setName(zooData.getName());
         zoo.setSquare(zooData.getSquare());

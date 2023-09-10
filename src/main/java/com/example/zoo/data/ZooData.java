@@ -11,7 +11,7 @@ public class ZooData {
     private String name;
 
     @NotBlank
-    private CountryData location;
+    private Long locationId;
 
     @NotBlank
     private double square;
