@@ -6,6 +6,11 @@ This project is considered to be a combination of different technologies and app
 * [Containerization](#containerization)
 * [Run without docker](#runwithoutdocker)
 * [Start using](#start-using)
+* [Google drive](#google-drive)
+
+---
+### Google Drive
+This Google Drive is used to store all videos regarding all phases: [link](https://drive.google.com/drive/folders/1fBpfP7I5tSagGTB_iIcAeFuXVp8mpLth?usp=sharing)
 
 ---
 ### Installation
@@ -35,8 +40,6 @@ mvn spring-boot:run -DDB_HOST=localhost -Dspring.profiles.active=dev
 ```
 ---
 ### Start using
-Despite using application via containerization, you can always try to use Azure:
-```
-Azure link: https://zoo-lab.azurewebsites.net
-```
-NOTE: In order not to spend subscription money, the app via Azure can be turned off.
+Despite using application via containerization, you can always try to use Azure:  
+Azure link: [click here](https://zoo-lab.azurewebsites.net)  
+#### NB! In order not to spend subscription money, the app via Azure can be turned off.
