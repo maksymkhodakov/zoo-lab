@@ -5,6 +5,7 @@ import com.example.zoo.dto.CountryDTO;
 import com.example.zoo.dto.SearchDTO;
 import com.example.zoo.exceptions.ApiErrors;
 import com.example.zoo.exceptions.OperationException;
+import com.example.zoo.integratons.maps.service.ContinentCoordinatesService;
 import com.example.zoo.mapper.CountryMapper;
 import com.example.zoo.repository.CountryRepository;
 import com.example.zoo.services.CountryService;
@@ -27,6 +28,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CountryServiceImpl implements CountryService {
     CountryRepository countryRepository;
+    ContinentCoordinatesService coordinatesService;
 
     @Override
     public List<CountryDTO> getAll() {
@@ -46,6 +48,7 @@ public class CountryServiceImpl implements CountryService {
     @Transactional
     public void save(CountryData countryData, MultipartFile multipartFile) throws IOException {
         final var country = CountryMapper.dataToEntity(countryData, multipartFile.getBytes());
+        country.setCoordinates(coordinatesService.continentToCoordinates(countryData.getContinent()));
         countryRepository.saveAndFlush(country);
         log.info("Country with id: " + country.getId() + " created");
     }
@@ -57,6 +60,7 @@ public class CountryServiceImpl implements CountryService {
                 .orElseThrow(() -> new OperationException(ApiErrors.COUNTRY_NOT_FOUND));
         country.setName(countryData.getName());
         country.setContinent(countryData.getContinent());
+        country.setCoordinates(coordinatesService.continentToCoordinates(countryData.getContinent()));
         country.setFlag(multipartFile.getBytes());
     }
 
