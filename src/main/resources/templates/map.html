@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Map</title>
+    <style>
+        /* Add CSS to make the map full screen under the navbar */
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map-container {
+            position: absolute;
+            top: 50px; /* Adjust this value to match the height of your navbar */
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        #map {
+            height: 100%;
+        }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCMpQl28UmkXnpUwHwUmkiWeTzE8yQK4jA"></script>
+</head>
+<div th:replace="navbar.html"></div>
+<body>
+<!-- Map container -->
+<div id="map-container">
+    <div id="map"></div>
+</div>
+
+<!-- JavaScript to initialize the map -->
+<script th:inline="javascript">
+    const coordinates = /*[[${coordinates}]]*/ [];
+    const mapMarkers = [];
+
+    function initMap() {
+        var mapOptions = {
+            center: { lat: coordinates[0].latitude, lng: coordinates[0].longitude }, // Set the center to the first coordinate
+            zoom: 10 // Adjust the initial zoom level as needed
+        };
+
+        var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+        // Loop through the coordinates and create markers
+        for (var i = 0; i < coordinates.length; i++) {
+            var marker = new google.maps.Marker({
+                position: { lat: coordinates[i].latitude, lng: coordinates[i].longitude },
+                map: map,
+                title: 'Marker Title' // Replace with a custom marker title
+            });
+            mapMarkers.push(marker);
+        }
+    }
+</script>
+<script>
+    // Initialize the map when the page loads
+    google.maps.event.addDomListener(window, 'load', initMap);
+</script>
+</body>
+</html>

@@ -5,6 +5,7 @@ import com.example.zoo.entity.Country;
 import com.example.zoo.enums.Continent;
 import com.example.zoo.exceptions.ApiErrors;
 import com.example.zoo.exceptions.OperationException;
+import com.example.zoo.integratons.maps.service.ContinentCoordinatesService;
 import com.example.zoo.mapper.CountryMapper;
 import com.example.zoo.repository.CountryRepository;
 import lombok.AccessLevel;
@@ -26,6 +27,7 @@ import java.util.Objects;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CountryController {
     CountryRepository countryRepository;
+    ContinentCoordinatesService coordinatesService;
 
     @GetMapping(value = "/getAll")
     public String findAll(Model map) {
@@ -51,6 +53,7 @@ public class CountryController {
             var country = Country.builder()
                     .name(textInput)
                     .continent(continent)
+                    .coordinates(coordinatesService.continentToCoordinates(continent))
                     .flag(fileInput.getBytes())
                     .build();
             countryRepository.saveAndFlush(country);
@@ -86,6 +89,7 @@ public class CountryController {
                 .orElseThrow(() -> new OperationException(ApiErrors.COUNTRY_NOT_FOUND));
         country.setName(name);
         country.setContinent(continent);
+        country.setCoordinates(coordinatesService.continentToCoordinates(continent));
         if (flag.getBytes().length != 0) {
             country.setFlag(flag.getBytes());
         }
