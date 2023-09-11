@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>List of Countries</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <link >
     <div th:replace="navbar.html"></div>
 </head>
@@ -20,6 +21,8 @@
             <th scope="col">Actions</th>
         </tr>
         </thead>
+        <!-- Chart Canvas -->
+        <canvas id="continentChart" width="400" height="100"></canvas>
         <tbody>
         <tr th:each="country : ${listOfCountries}">
             <td th:text="${country.name}"></td>
@@ -38,5 +41,55 @@
         </tbody>
     </table>
 </div>
+<script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        const ctx = document.getElementById('continentChart').getContext('2d');
+        const listOfCountries = /*[[${listOfCountries}]]*/ [];
+        const continentCounts = {};
+
+        listOfCountries.forEach(function (country) {
+            const continent = country.continent;
+            if (continentCounts[continent]) {
+                continentCounts[continent]++;
+            } else {
+                continentCounts[continent] = 1;
+            }
+        });
+
+        var continents = Object.keys(continentCounts);
+        var counts = Object.values(continentCounts);
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: continents,
+                datasets: [{
+                    label: 'Country Count by Continent',
+                    data: counts,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Countries'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Continent'
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
 </body>
 </html>

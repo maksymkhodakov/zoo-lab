@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>List of Animals</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
   <div th:replace="navbar.html"></div>
 </head>
 <body>
@@ -21,6 +22,8 @@
       <th scope="col">Actions</th>
     </tr>
     </thead>
+    <!-- Chart Canvas -->
+    <canvas id="kindOfAnimalChart" width="400" height="100"></canvas>
     <tbody>
     <tr th:each="animal : ${lostAnimals}">
       <td th:text="${animal.name}"></td>
@@ -44,5 +47,55 @@
     </tbody>
   </table>
 </div>
+<script th:inline="javascript">
+  document.addEventListener("DOMContentLoaded", function () {
+    const ctx = document.getElementById('kindOfAnimalChart').getContext('2d');
+    const listOfAnimals = /*[[${lostAnimals}]]*/ [];
+    const kindCounts = {};
+
+    listOfAnimals.forEach(function (animal) {
+      const kind = animal.kindAnimal;
+      if (kindCounts[kind]) {
+        kindCounts[kind]++;
+      } else {
+        kindCounts[kind] = 1;
+      }
+    });
+
+    var kinds = Object.keys(kindCounts);
+    var kindCount = Object.values(kindCounts);
+
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: kinds,
+        datasets: [{
+          label: 'Animal Count by Kind',
+          data: kindCount,
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Number of Animals'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Kind'
+            }
+          }
+        }
+      }
+    });
+  });
+</script>
 </body>
 </html>
