@@ -2,8 +2,10 @@ package com.example.zoo.mapper;
 
 import com.example.zoo.data.ZooData;
 import com.example.zoo.dto.ZooDTO;
+import com.example.zoo.entity.Animal;
 import com.example.zoo.entity.Country;
 import com.example.zoo.entity.Zoo;
+import com.example.zoo.integratons.telegram.domain.dto.ZooTelegramDTO;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
@@ -14,6 +16,16 @@ public class ZooMapper {
                 .name(zoo.getName())
                 .square(zoo.getSquare())
                 .location(CountryMapper.entityToDto(zoo.getLocation()))
+                .build();
+    }
+
+    public ZooTelegramDTO entityToTelegramDTO(Zoo zoo) {
+        return ZooTelegramDTO.builder()
+                .id(zoo.getId())
+                .name(zoo.getName())
+                .square(zoo.getSquare())
+                .coordinates(zoo.getLocation().getCoordinates())
+                .animalNames(zoo.getAnimals().stream().map(Animal::getName).toList())
                 .build();
     }
 
