@@ -16,7 +16,7 @@ public class Zoo extends TimestampEntity {
 
     private String name;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(joinColumns = @JoinColumn(name = "zoo_id"),
             inverseJoinColumns = @JoinColumn(name = "animal_id"))
     private List<Animal> animals = new ArrayList<>();
