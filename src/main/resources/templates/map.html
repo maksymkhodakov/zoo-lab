@@ -21,7 +21,7 @@
             height: 100%;
         }
     </style>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCMpQl28UmkXnpUwHwUmkiWeTzE8yQK4jA"></script>
+    <script th:src="'https://maps.googleapis.com/maps/api/js?key=' + ${apiKey}"></script>
 </head>
 <div th:replace="navbar.html"></div>
 <body>
