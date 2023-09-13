@@ -4,6 +4,7 @@ This project is considered to be a combination of different technologies and app
 # Table of contents
 * [Google drive](#google-drive)
 * [Postman](#postman)
+* [Swagger](#swagger)
 * [Installation](#installation)
 * [Containerization](#containerization)
 * [Run without docker](#runwithoutdocker)
@@ -17,6 +18,10 @@ This Google Drive is used to store all videos regarding all phases: [link](https
 ### Postman
 For automatic testing of WebAPI is recommended to use Postman.
 To recreate a collection in your Postman app, use [this](https://drive.google.com/file/d/12LD66lorETfunYp6czNcedUubCvnTrcH/view) json file import collection with all appropriate automatic API tests.
+
+---
+### Swagger
+Swagger is used for dev testing purposes. Link could be found in application.properties
 
 ---
 ### Installation
