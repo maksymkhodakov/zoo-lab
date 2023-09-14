@@ -2,6 +2,7 @@ package com.example.zoo.integratons.salesforce.controller;
 
 import com.example.zoo.dto.ResponseDTO;
 import com.example.zoo.integratons.salesforce.service.AccountService;
+import com.microsoft.applicationinsights.TelemetryClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,9 +19,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AccountRestController {
     private final AccountService accountService;
+    private final TelemetryClient telemetryClient = new TelemetryClient();
 
     @GetMapping(value = "/accounts")
     public ResponseDTO<Map> getAccounts() {
+        telemetryClient.trackEvent("Get accounts from salesforce");
         try {
             return ResponseDTO.ofData(accountService.getAccounts(), ResponseDTO.ResponseStatus.OK);
         } catch (Exception e) {
