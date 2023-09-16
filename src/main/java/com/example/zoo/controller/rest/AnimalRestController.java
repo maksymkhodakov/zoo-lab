@@ -6,6 +6,7 @@ import com.example.zoo.dto.CountryDTO;
 import com.example.zoo.dto.ResponseDTO;
 import com.example.zoo.dto.SearchDTO;
 import com.example.zoo.exceptions.OperationException;
+import com.example.zoo.search.dto.AnimalElasticDTO;
 import com.example.zoo.services.AnimalService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -29,16 +30,38 @@ public class AnimalRestController {
         return ResponseDTO.ofData(animalService.getAll(), ResponseDTO.ResponseStatus.OK);
     }
 
+    @GetMapping("/elastic/getAll")
+    public ResponseDTO<Page<AnimalElasticDTO>> getAllElastic(@RequestBody SearchDTO searchDTO) {
+        return ResponseDTO.ofData(animalService.getAllElastic(searchDTO), ResponseDTO.ResponseStatus.OK);
+    }
+
     @GetMapping("/pagination/getAll")
     public ResponseDTO<Page<AnimalDTO>> paginationGetAll(@RequestBody SearchDTO searchDTO) {
         return ResponseDTO.ofData(animalService.getAll(searchDTO), ResponseDTO.ResponseStatus.OK);
     }
 
+    @GetMapping("/elastic/findByName/{name}")
+    public ResponseDTO<Page<AnimalElasticDTO>> getByName(@PathVariable String name, @RequestBody SearchDTO searchDTO) {
+        try {
+            return ResponseDTO.ofData(animalService.getByNameElastic(name, searchDTO), ResponseDTO.ResponseStatus.OK);
+        } catch (OperationException e) {
+            return ResponseDTO.ofData(null, ResponseDTO.ResponseStatus.ERROR);
+        }
+    }
 
     @GetMapping("/{id}")
     public ResponseDTO<AnimalDTO> getById(@PathVariable Long id) {
         try {
             return ResponseDTO.ofData(animalService.getById(id), ResponseDTO.ResponseStatus.OK);
+        } catch (OperationException e) {
+            return ResponseDTO.ofData(null, ResponseDTO.ResponseStatus.ERROR);
+        }
+    }
+
+    @GetMapping("/elastic/{id}")
+    public ResponseDTO<AnimalElasticDTO> getByIdElastic(@PathVariable Long id) {
+        try {
+            return ResponseDTO.ofData(animalService.getByIdElastic(id), ResponseDTO.ResponseStatus.OK);
         } catch (OperationException e) {
             return ResponseDTO.ofData(null, ResponseDTO.ResponseStatus.ERROR);
         }
@@ -67,10 +90,30 @@ public class AnimalRestController {
         return ResponseDTO.ok();
     }
 
+    @PutMapping("/elastic/update")
+    public ResponseDTO<Void> updateElastic(@RequestPart("id") Long id, @RequestPart("data") AnimalData animalData) {
+        try {
+            animalService.updateElastic(id, animalData);
+        } catch (OperationException e) {
+            return ResponseDTO.error(e.getMessage());
+        }
+        return ResponseDTO.ok();
+    }
+
     @DeleteMapping("/delete")
     public ResponseDTO<Void> delete(@RequestParam Long id) {
         try {
             animalService.delete(id);
+        } catch (OperationException e) {
+            return ResponseDTO.error(e.getMessage());
+        }
+        return ResponseDTO.ok();
+    }
+
+    @DeleteMapping("/elastic/delete")
+    public ResponseDTO<Void> deleteElastic(@RequestParam Long id) {
+        try {
+            animalService.deleteElastic(id);
         } catch (OperationException e) {
             return ResponseDTO.error(e.getMessage());
         }
