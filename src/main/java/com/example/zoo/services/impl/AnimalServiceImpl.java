@@ -55,6 +55,11 @@ public class AnimalServiceImpl implements AnimalService {
     }
 
     @Override
+    public Page<AnimalElasticDTO> findByKindAnimalAndTypePowerSupply(String kind, String type, SearchDTO searchDTO) {
+        return animalElasticRepository.findByKindAnimalAndTypePowerSupply(kind, type, SearchUtil.getPageable(searchDTO));
+    }
+
+    @Override
     public Page<AnimalDTO> getAll(SearchDTO searchDTO) {
         return animalRepository.findAll(SearchUtil.getPageable(searchDTO))
                 .map(AnimalMapper::entityToDto);

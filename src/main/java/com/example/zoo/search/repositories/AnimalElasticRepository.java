@@ -9,4 +9,6 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 public interface AnimalElasticRepository extends ElasticsearchRepository<AnimalElasticDTO, Long> {
     @Query("{\"match\": {\"name\": {\"query\": \"?0\"}}}")
     Page<AnimalElasticDTO> findByName(String name, Pageable pageable);
+
+    Page<AnimalElasticDTO> findByKindAnimalAndTypePowerSupply(String kinAnimal, String type, Pageable pageable);
 }

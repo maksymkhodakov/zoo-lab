@@ -49,6 +49,17 @@ public class AnimalRestController {
         }
     }
 
+    @GetMapping("/elastic/findByKindAndType")
+    public ResponseDTO<Page<AnimalElasticDTO>> getByKindAndType(@RequestParam String kind,
+                                                                @RequestParam String type,
+                                                                @RequestBody SearchDTO searchDTO) {
+        try {
+            return ResponseDTO.ofData(animalService.findByKindAnimalAndTypePowerSupply(kind, type, searchDTO), ResponseDTO.ResponseStatus.OK);
+        } catch (OperationException e) {
+            return ResponseDTO.ofData(null, ResponseDTO.ResponseStatus.ERROR);
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseDTO<AnimalDTO> getById(@PathVariable Long id) {
         try {

@@ -19,6 +19,8 @@ public interface AnimalService {
 
     Page<AnimalElasticDTO> getByNameElastic(String name, SearchDTO searchDTO);
 
+    Page<AnimalElasticDTO> findByKindAnimalAndTypePowerSupply(String kind, String type, SearchDTO searchDTO);
+
     Page<AnimalDTO> getAll(SearchDTO searchDTO);
 
     void save(AnimalData animalData, MultipartFile multipartFile) throws IOException;
