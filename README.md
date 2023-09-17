@@ -53,4 +53,5 @@ mvn spring-boot:run -DDB_HOST=localhost -Dspring.profiles.active=dev
 ### Start using
 Despite using application via containerization, you can always try to use Azure:  
 Azure link: [click here](https://zoo-lab.azurewebsites.net)  
-#### NB! In order not to spend subscription money, the app via Azure can be turned off.
+#### NB! In order not to spend subscription money, the app via Azure can be turned off.  
+## NB Keep in mind that Elasticsearch is disabled on prod environment
