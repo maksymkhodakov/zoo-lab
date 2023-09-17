@@ -6,7 +6,10 @@ import com.example.zoo.entity.Animal;
 import com.example.zoo.entity.Country;
 import com.example.zoo.entity.Zoo;
 import com.example.zoo.integratons.telegram.domain.dto.ZooTelegramDTO;
+import com.example.zoo.search.dto.ZooElasticDTO;
 import lombok.experimental.UtilityClass;
+
+import java.util.stream.Collectors;
 
 @UtilityClass
 public class ZooMapper {
@@ -34,6 +37,17 @@ public class ZooMapper {
                 .name(zooData.getName())
                 .square(zooData.getSquare())
                 .location(country)
+                .build();
+    }
+
+    public ZooElasticDTO entityToElasticDTO(Zoo zoo) {
+        return ZooElasticDTO.builder()
+                .id(zoo.getId())
+                .createDate(zoo.getCreateDate().toLocalDateTime().toLocalDate())
+                .updateDate(zoo.getLastUpdateDate().toLocalDateTime().toLocalDate())
+                .name(zoo.getName())
+                .square(zoo.getSquare())
+                .location(CountryMapper.entityToElasticDTO(zoo.getLocation()))
                 .build();
     }
 }

@@ -1,5 +1,8 @@
 package com.example.zoo.services.impl;
 
+import com.example.zoo.entity.Animal;
+import com.example.zoo.search.dto.AnimalElasticDTO;
+import com.example.zoo.search.repositories.AnimalElasticRepository;
 import com.example.zoo.utils.SearchUtil;
 import com.example.zoo.data.AnimalData;
 import com.example.zoo.dto.AnimalDTO;
@@ -30,6 +33,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AnimalServiceImpl implements AnimalService {
     AnimalRepository animalRepository;
+    AnimalElasticRepository animalElasticRepository;
     CountryRepository countryRepository;
 
     @Override
@@ -38,6 +42,21 @@ public class AnimalServiceImpl implements AnimalService {
                 .stream()
                 .map(AnimalMapper::entityToDto)
                 .toList();
+    }
+
+    @Override
+    public Page<AnimalElasticDTO> getAllElastic(SearchDTO searchDTO) {
+        return animalElasticRepository.findAll(SearchUtil.getPageable(searchDTO));
+    }
+
+    @Override
+    public Page<AnimalElasticDTO> getByNameElastic(String name, SearchDTO searchDTO) {
+        return animalElasticRepository.findByName(name, SearchUtil.getPageable(searchDTO));
+    }
+
+    @Override
+    public Page<AnimalElasticDTO> findByKindAnimalAndTypePowerSupply(String kind, String type, SearchDTO searchDTO) {
+        return animalElasticRepository.findByKindAnimalAndTypePowerSupply(kind, type, SearchUtil.getPageable(searchDTO));
     }
 
     @Override
@@ -52,6 +71,14 @@ public class AnimalServiceImpl implements AnimalService {
         final var animal = AnimalMapper.dataToEntity(animalData, multipartFile.getBytes());
         animalRepository.saveAndFlush(animal);
         log.info("Animal with id: " + animal.getId() + " created");
+        createElastic(animal);
+    }
+
+    @Transactional
+    public void createElastic(Animal animal) {
+        final var animalElastic = AnimalMapper.entityToElasticDTO(animal);
+        final var saved = animalElasticRepository.save(animalElastic);
+        log.info("Animal with id: " + saved.getId() + " created in elasticsearch");
     }
 
     @Override
@@ -67,9 +94,26 @@ public class AnimalServiceImpl implements AnimalService {
     }
 
     @Override
+    @Transactional
+    public void updateElastic(Long id, AnimalData animalData) {
+        final var animalToUpdate = getByIdElastic(id);
+        animalToUpdate.setName(animalData.getName());
+        animalToUpdate.setVenomous(animalData.isVenomous());
+        animalToUpdate.setTypePowerSupply(animalData.getTypePowerSupply().name());
+        animalToUpdate.setKindAnimal(animalData.getKindAnimal().name());
+        animalElasticRepository.save(animalToUpdate);
+    }
+
+    @Override
     public AnimalDTO getById(Long id) {
         return AnimalMapper.entityToDto(animalRepository.findById(id)
                 .orElseThrow(() -> new OperationException(ApiErrors.ANIMAL_NOT_FOUND)));
+    }
+
+    @Override
+    public AnimalElasticDTO getByIdElastic(Long id) {
+        return animalElasticRepository.findById(id)
+                .orElseThrow(() -> new OperationException(ApiErrors.ANIMAL_ELASTIC_NOT_FOUND));
     }
 
     @Override
@@ -78,6 +122,13 @@ public class AnimalServiceImpl implements AnimalService {
         final var animalToDelete = animalRepository.findById(id)
                 .orElseThrow(() -> new OperationException(ApiErrors.ANIMAL_NOT_FOUND));
         animalRepository.delete(animalToDelete);
+    }
+
+    @Override
+    @Transactional
+    public void deleteElastic(Long id) {
+        final var animalToDelete = getByIdElastic(id);
+        animalElasticRepository.delete(animalToDelete);
     }
 
     @Override
