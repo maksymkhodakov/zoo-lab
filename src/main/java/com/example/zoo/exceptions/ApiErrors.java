@@ -15,7 +15,9 @@ public enum ApiErrors {
     // elasticsearch
     ANIMAL_ELASTIC_NOT_FOUND("Animal with provided id was not found in Elasticsearch storage"),
     COUNTRY_ELASTIC_NOT_FOUND("Country with provided id was not found in Elasticsearch storage"),
-    ZOO_ELASTIC_NOT_FOUND("Zoo with provided id was not found in Elasticsearch storage");
+    ZOO_ELASTIC_NOT_FOUND("Zoo with provided id was not found in Elasticsearch storage"),
+
+    ELASTIC_DISABLED("Due to Microsoft student subscription policy, elasticsearch is disabled in prod environment");
 
     private final String message;
 }

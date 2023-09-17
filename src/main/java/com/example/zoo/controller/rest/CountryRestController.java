@@ -89,6 +89,16 @@ public class CountryRestController {
         return ResponseDTO.ok();
     }
 
+    @PostMapping("/elastic/create")
+    public ResponseDTO<Void> createElastic(@RequestPart("data") CountryData countryData) {
+        try {
+            countryService.saveElastic(countryData);
+        } catch (OperationException e) {
+            return ResponseDTO.error(e.getMessage());
+        }
+        return ResponseDTO.ok();
+    }
+
     @PutMapping("/update")
     public ResponseDTO<Void> update(@RequestPart("id") Long id,
                                     @RequestPart("data") CountryData countryData,

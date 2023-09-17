@@ -39,4 +39,6 @@ public interface ZooService {
     void addAnimal(Long id, Long animalId);
 
     void deleteAnimal(Long id, Long animalId);
+
+    void saveElastic(ZooData zooData);
 }

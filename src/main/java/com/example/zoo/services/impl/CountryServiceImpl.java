@@ -3,22 +3,18 @@ package com.example.zoo.services.impl;
 import com.example.zoo.data.CountryData;
 import com.example.zoo.dto.CountryDTO;
 import com.example.zoo.dto.SearchDTO;
-import com.example.zoo.entity.Country;
-import com.example.zoo.enums.Continent;
 import com.example.zoo.exceptions.ApiErrors;
 import com.example.zoo.exceptions.OperationException;
 import com.example.zoo.integratons.maps.service.ContinentCoordinatesService;
 import com.example.zoo.mapper.CountryMapper;
 import com.example.zoo.repository.CountryRepository;
-import com.example.zoo.search.dto.AnimalElasticDTO;
 import com.example.zoo.search.dto.CountryElasticDTO;
 import com.example.zoo.search.repositories.CountryElasticRepository;
 import com.example.zoo.services.CountryService;
 import com.example.zoo.utils.SearchUtil;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,15 +23,24 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CountryServiceImpl implements CountryService {
-    CountryRepository countryRepository;
-    CountryElasticRepository countryElasticRepository;
-    ContinentCoordinatesService coordinatesService;
+    @Value("${enable-elasticsearch}")
+    private String enable;
+
+    private final Optional<CountryElasticRepository> countryElasticRepository;
+    private final CountryRepository countryRepository;
+    private final ContinentCoordinatesService coordinatesService;
+
+    private void validateElastic() {
+        if (Boolean.FALSE.equals(Boolean.parseBoolean(enable))) {
+            throw new OperationException(ApiErrors.ELASTIC_DISABLED);
+        }
+    }
 
     @Override
     public List<CountryDTO> getAll() {
@@ -47,17 +52,20 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     public Page<CountryElasticDTO> getAllElastic(SearchDTO searchDTO) {
-        return countryElasticRepository.findAll(SearchUtil.getPageable(searchDTO));
+        validateElastic();
+        return countryElasticRepository.get().findAll(SearchUtil.getPageable(searchDTO));
     }
 
     @Override
     public Page<CountryElasticDTO> getByContinent(String continent, SearchDTO searchDTO) {
-        return countryElasticRepository.findByContinent(continent, SearchUtil.getPageable(searchDTO));
+        validateElastic();
+        return countryElasticRepository.get().findByContinent(continent, SearchUtil.getPageable(searchDTO));
     }
 
     @Override
     public Page<CountryElasticDTO> getByDateRange(LocalDate start, LocalDate end, SearchDTO searchDTO) {
-        return countryElasticRepository.findByCreateDateIsBetween(start, end, SearchUtil.getPageable(searchDTO));
+        validateElastic();
+        return countryElasticRepository.get().findByCreateDateIsBetween(start, end, SearchUtil.getPageable(searchDTO));
     }
 
     @Override
@@ -73,14 +81,15 @@ public class CountryServiceImpl implements CountryService {
         country.setCoordinates(coordinatesService.continentToCoordinates(countryData.getContinent()));
         countryRepository.saveAndFlush(country);
         log.info("Country with id: " + country.getId() + " created");
-        saveElastic(country);
     }
 
+    @Override
     @Transactional
-    public void saveElastic(Country country) {
-        final var countryElastic = CountryMapper.entityToElasticDTO(country);
-        countryElasticRepository.save(countryElastic);
-        log.info("Country with id " + country.getId() + " created in elasticsearch");
+    public void saveElastic(CountryData countryData) {
+        validateElastic();
+        final var countryElastic = CountryMapper.entityToElasticDTO(CountryMapper.dataToEntity(countryData, null));
+        countryElasticRepository.get().save(countryElastic);
+        log.info("Country with id " + countryElastic.getId() + " created in elasticsearch");
     }
 
     @Override
@@ -97,11 +106,12 @@ public class CountryServiceImpl implements CountryService {
     @Override
     @Transactional
     public void updateElastic(Long id, CountryData countryData) {
+        validateElastic();
         final var country = getByIdElastic(id);
         country.setName(countryData.getName());
         country.setContinent(countryData.getContinent().getName());
         country.setCoordinates(coordinatesService.continentToCoordinates(countryData.getContinent()).toString());
-        countryElasticRepository.save(country);
+        countryElasticRepository.get().save(country);
     }
 
     @Override
@@ -112,7 +122,8 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     public CountryElasticDTO getByIdElastic(Long id) {
-        return countryElasticRepository.findById(id)
+        validateElastic();
+        return countryElasticRepository.get().findById(id)
                 .orElseThrow(() -> new OperationException(ApiErrors.COUNTRY_ELASTIC_NOT_FOUND));
     }
 
@@ -126,7 +137,8 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     public void deleteElastic(Long id) {
+        validateElastic();
         final var country = getByIdElastic(id);
-        countryElasticRepository.save(country);
+        countryElasticRepository.get().save(country);
     }
 }
