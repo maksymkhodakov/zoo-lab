@@ -6,6 +6,7 @@ import com.example.zoo.entity.Country;
 import com.example.zoo.search.dto.CountryElasticDTO;
 import lombok.experimental.UtilityClass;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -35,7 +36,7 @@ public class CountryMapper {
                 .updateDate(entity.getLastUpdateDate().toLocalDateTime().toLocalDate())
                 .name(entity.getName())
                 .continent(entity.getContinent().getName())
-                .coordinates(entity.getCoordinates().toString())
+                .coordinates(Objects.nonNull(entity.getCoordinates()) ? entity.getCoordinates().toString() : null)
                 .build();
     }
 }

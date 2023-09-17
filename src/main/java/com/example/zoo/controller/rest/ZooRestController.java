@@ -6,6 +6,7 @@ import com.example.zoo.dto.ResponseDTO;
 import com.example.zoo.dto.SearchDTO;
 import com.example.zoo.dto.ZooDTO;
 import com.example.zoo.exceptions.OperationException;
+import com.example.zoo.search.dto.ZooElasticDTO;
 import com.example.zoo.services.ZooService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -32,10 +33,45 @@ public class ZooRestController {
         return ResponseDTO.ofData(zooService.getAll(searchDTO), ResponseDTO.ResponseStatus.OK);
     }
 
+    @GetMapping("/elastic/getAll")
+    public ResponseDTO<Page<ZooElasticDTO>> getAll(@RequestBody SearchDTO searchDTO) {
+        return ResponseDTO.ofData(zooService.getAllElastic(searchDTO), ResponseDTO.ResponseStatus.OK);
+    }
+
+    @GetMapping("/elastic/getByName")
+    public ResponseDTO<Page<ZooElasticDTO>> getByName(@RequestParam String name,
+                                                      @RequestBody SearchDTO searchDTO) {
+        try {
+            return ResponseDTO.ofData(zooService.getByName(name, searchDTO), ResponseDTO.ResponseStatus.OK);
+        } catch (OperationException e) {
+            return ResponseDTO.ofData(null, ResponseDTO.ResponseStatus.ERROR);
+        }
+    }
+
+    @GetMapping("/elastic/getBySquareRange")
+    public ResponseDTO<Page<ZooElasticDTO>> getBySquareRange(@RequestParam double from,
+                                                             @RequestParam double to,
+                                                             @RequestBody SearchDTO searchDTO) {
+        try {
+            return ResponseDTO.ofData(zooService.getBySquareRange(from, to, searchDTO), ResponseDTO.ResponseStatus.OK);
+        } catch (OperationException e) {
+            return ResponseDTO.ofData(null, ResponseDTO.ResponseStatus.ERROR);
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseDTO<ZooDTO> getById(@PathVariable Long id) {
         try {
             return ResponseDTO.ofData(zooService.getById(id), ResponseDTO.ResponseStatus.OK);
+        } catch (OperationException e) {
+            return ResponseDTO.ofData(null, ResponseDTO.ResponseStatus.ERROR);
+        }
+    }
+
+    @GetMapping("/elastic/{id}")
+    public ResponseDTO<ZooElasticDTO> getByIdElastic(@PathVariable Long id) {
+        try {
+            return ResponseDTO.ofData(zooService.getByIdElastic(id), ResponseDTO.ResponseStatus.OK);
         } catch (OperationException e) {
             return ResponseDTO.ofData(null, ResponseDTO.ResponseStatus.ERROR);
         }
@@ -62,10 +98,31 @@ public class ZooRestController {
         return ResponseDTO.ok();
     }
 
+    @PutMapping("/elastic/update")
+    public ResponseDTO<Void> updateElastic(@RequestPart("id") Long id,
+                                           @RequestPart("data") ZooData zooData) {
+        try {
+            zooService.updateElastic(id, zooData);
+        } catch (OperationException e) {
+            return ResponseDTO.error(e.getMessage());
+        }
+        return ResponseDTO.ok();
+    }
+
     @DeleteMapping("/delete")
     public ResponseDTO<Void> delete(@RequestParam Long id) {
         try {
             zooService.delete(id);
+        } catch (OperationException e) {
+            return ResponseDTO.error(e.getMessage());
+        }
+        return ResponseDTO.ok();
+    }
+
+    @DeleteMapping("/elastic/delete")
+    public ResponseDTO<Void> deleteElastic(@RequestParam Long id) {
+        try {
+            zooService.deleteElastic(id);
         } catch (OperationException e) {
             return ResponseDTO.error(e.getMessage());
         }

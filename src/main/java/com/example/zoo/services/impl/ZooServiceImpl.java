@@ -4,6 +4,7 @@ import com.example.zoo.data.ZooData;
 import com.example.zoo.dto.AnimalDTO;
 import com.example.zoo.dto.SearchDTO;
 import com.example.zoo.dto.ZooDTO;
+import com.example.zoo.entity.Zoo;
 import com.example.zoo.exceptions.ApiErrors;
 import com.example.zoo.exceptions.OperationException;
 import com.example.zoo.mapper.AnimalMapper;
@@ -11,6 +12,9 @@ import com.example.zoo.mapper.ZooMapper;
 import com.example.zoo.repository.AnimalRepository;
 import com.example.zoo.repository.CountryRepository;
 import com.example.zoo.repository.ZooRepository;
+import com.example.zoo.search.dto.ZooElasticDTO;
+import com.example.zoo.search.repositories.CountryElasticRepository;
+import com.example.zoo.search.repositories.ZooElasticRepository;
 import com.example.zoo.services.ZooService;
 import com.example.zoo.utils.SearchUtil;
 import lombok.AccessLevel;
@@ -29,7 +33,9 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ZooServiceImpl implements ZooService {
     ZooRepository zooRepository;
+    ZooElasticRepository zooElasticRepository;
     CountryRepository countryRepository;
+    CountryElasticRepository countryElasticRepository;
     AnimalRepository animalRepository;
 
     @Override
@@ -47,6 +53,21 @@ public class ZooServiceImpl implements ZooService {
     }
 
     @Override
+    public Page<ZooElasticDTO> getAllElastic(SearchDTO searchDTO) {
+        return zooElasticRepository.findAll(SearchUtil.getPageable(searchDTO));
+    }
+
+    @Override
+    public Page<ZooElasticDTO> getByName(String name, SearchDTO searchDTO) {
+        return zooElasticRepository.findByName(name, SearchUtil.getPageable(searchDTO));
+    }
+
+    @Override
+    public Page<ZooElasticDTO> getBySquareRange(double from, double to, SearchDTO searchDTO) {
+        return zooElasticRepository.findBySquareRange(from, to, SearchUtil.getPageable(searchDTO));
+    }
+
+    @Override
     @Transactional
     public void save(ZooData zooData) {
         final var country = countryRepository.findById(zooData.getLocationId())
@@ -54,6 +75,14 @@ public class ZooServiceImpl implements ZooService {
         final var zoo = ZooMapper.dataToEntity(zooData, country);
         zooRepository.saveAndFlush(zoo);
         log.info("Zoo with id: " + country.getId() + " created");
+        saveElastic(zoo);
+    }
+
+    @Transactional
+    public void saveElastic(Zoo zoo) {
+        final var zooElasticDTO = ZooMapper.entityToElasticDTO(zoo);
+        zooElasticRepository.save(zooElasticDTO);
+        log.info("Zoo with id: " + zoo.getId() + " was created in elasticsearch");
     }
 
     @Override
@@ -69,9 +98,25 @@ public class ZooServiceImpl implements ZooService {
     }
 
     @Override
+    public void updateElastic(Long id, ZooData zooData) {
+        final var zoo = getByIdElastic(id);
+        final var country = countryElasticRepository.findById(zooData.getLocationId())
+                .orElseThrow(() -> new OperationException(ApiErrors.COUNTRY_ELASTIC_NOT_FOUND));
+        zoo.setName(zooData.getName());
+        zoo.setSquare(zooData.getSquare());
+        zoo.setLocation(country);
+    }
+
+    @Override
     public ZooDTO getById(Long id) {
         return ZooMapper.entityToDto(zooRepository.findById(id)
                 .orElseThrow(() -> new OperationException(ApiErrors.ZOO_NOT_FOUND)));
+    }
+
+    @Override
+    public ZooElasticDTO getByIdElastic(Long id) {
+        return zooElasticRepository.findById(id)
+                .orElseThrow(() -> new OperationException(ApiErrors.ZOO_NOT_FOUND));
     }
 
     @Override
@@ -80,6 +125,12 @@ public class ZooServiceImpl implements ZooService {
         final var zoo = zooRepository.findById(id)
                 .orElseThrow(() -> new OperationException(ApiErrors.ZOO_NOT_FOUND));
         zooRepository.delete(zoo);
+    }
+
+    @Override
+    public void deleteElastic(Long id) {
+        final var zoo = getByIdElastic(id);
+        zooElasticRepository.delete(zoo);
     }
 
     @Override
