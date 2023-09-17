@@ -89,6 +89,16 @@ public class AnimalRestController {
         return ResponseDTO.ok();
     }
 
+    @PostMapping("/elastic/create")
+    public ResponseDTO<Void> createElastic(@RequestPart("data") AnimalData animalData) {
+        try {
+            animalService.createElastic(animalData);
+        } catch (OperationException e) {
+            return ResponseDTO.error(e.getMessage());
+        }
+        return ResponseDTO.ok();
+    }
+
     @PutMapping("/update")
     public ResponseDTO<Void> update(@RequestPart("id") Long id,
                                     @RequestPart("data") AnimalData animalData,

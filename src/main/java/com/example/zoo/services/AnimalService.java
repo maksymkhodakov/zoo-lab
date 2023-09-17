@@ -4,6 +4,7 @@ import com.example.zoo.data.AnimalData;
 import com.example.zoo.dto.AnimalDTO;
 import com.example.zoo.dto.CountryDTO;
 import com.example.zoo.dto.SearchDTO;
+import com.example.zoo.entity.Animal;
 import com.example.zoo.search.dto.AnimalElasticDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +25,8 @@ public interface AnimalService {
     Page<AnimalDTO> getAll(SearchDTO searchDTO);
 
     void save(AnimalData animalData, MultipartFile multipartFile) throws IOException;
+
+    void createElastic(AnimalData animal);
 
     void update(Long id, AnimalData animalData, MultipartFile multipartFile) throws IOException;
 

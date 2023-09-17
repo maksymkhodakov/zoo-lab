@@ -26,6 +26,8 @@ public interface CountryService {
 
     void save(CountryData countryData, MultipartFile multipartFile) throws IOException;
 
+    void saveElastic(CountryData countryData);
+
     void update(Long id, CountryData countryData, MultipartFile multipartFile) throws IOException;
 
     CountryDTO getById(Long id);

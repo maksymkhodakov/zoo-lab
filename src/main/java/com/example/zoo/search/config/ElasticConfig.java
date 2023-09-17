@@ -1,6 +1,7 @@
 package com.example.zoo.search.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.elasticsearch.client.ClientConfiguration;
 import org.springframework.data.elasticsearch.client.elc.ElasticsearchConfiguration;
@@ -9,6 +10,7 @@ import org.springframework.lang.NonNull;
 
 @Configuration
 @EnableElasticsearchRepositories(basePackages = "com.example.zoo.search.repositories")
+@ConditionalOnProperty(name = "enable-elasticsearch", havingValue = "true")
 public class ElasticConfig extends ElasticsearchConfiguration {
     @Value("${elastic-host}")
     private String host;

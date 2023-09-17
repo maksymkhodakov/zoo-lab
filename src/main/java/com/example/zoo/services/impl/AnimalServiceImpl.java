@@ -1,6 +1,5 @@
 package com.example.zoo.services.impl;
 
-import com.example.zoo.entity.Animal;
 import com.example.zoo.search.dto.AnimalElasticDTO;
 import com.example.zoo.search.repositories.AnimalElasticRepository;
 import com.example.zoo.utils.SearchUtil;
@@ -15,10 +14,9 @@ import com.example.zoo.mapper.CountryMapper;
 import com.example.zoo.repository.AnimalRepository;
 import com.example.zoo.repository.CountryRepository;
 import com.example.zoo.services.AnimalService;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,15 +24,24 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AnimalServiceImpl implements AnimalService {
-    AnimalRepository animalRepository;
-    AnimalElasticRepository animalElasticRepository;
-    CountryRepository countryRepository;
+    @Value("${enable-elasticsearch}")
+    private String enable;
+
+    private final Optional<AnimalElasticRepository> animalElasticRepository;
+    private final AnimalRepository animalRepository;
+    private final CountryRepository countryRepository;
+
+    private void validateElastic() {
+        if (Boolean.FALSE.equals(Boolean.parseBoolean(enable))) {
+            throw new OperationException(ApiErrors.ELASTIC_DISABLED);
+        }
+    }
 
     @Override
     public List<AnimalDTO> getAll() {
@@ -46,17 +53,20 @@ public class AnimalServiceImpl implements AnimalService {
 
     @Override
     public Page<AnimalElasticDTO> getAllElastic(SearchDTO searchDTO) {
-        return animalElasticRepository.findAll(SearchUtil.getPageable(searchDTO));
+        validateElastic();
+        return animalElasticRepository.get().findAll(SearchUtil.getPageable(searchDTO));
     }
 
     @Override
     public Page<AnimalElasticDTO> getByNameElastic(String name, SearchDTO searchDTO) {
-        return animalElasticRepository.findByName(name, SearchUtil.getPageable(searchDTO));
+        validateElastic();
+        return animalElasticRepository.get().findByName(name, SearchUtil.getPageable(searchDTO));
     }
 
     @Override
     public Page<AnimalElasticDTO> findByKindAnimalAndTypePowerSupply(String kind, String type, SearchDTO searchDTO) {
-        return animalElasticRepository.findByKindAnimalAndTypePowerSupply(kind, type, SearchUtil.getPageable(searchDTO));
+        validateElastic();
+        return animalElasticRepository.get().findByKindAnimalAndTypePowerSupply(kind, type, SearchUtil.getPageable(searchDTO));
     }
 
     @Override
@@ -71,13 +81,14 @@ public class AnimalServiceImpl implements AnimalService {
         final var animal = AnimalMapper.dataToEntity(animalData, multipartFile.getBytes());
         animalRepository.saveAndFlush(animal);
         log.info("Animal with id: " + animal.getId() + " created");
-        createElastic(animal);
     }
 
+    @Override
     @Transactional
-    public void createElastic(Animal animal) {
-        final var animalElastic = AnimalMapper.entityToElasticDTO(animal);
-        final var saved = animalElasticRepository.save(animalElastic);
+    public void createElastic(AnimalData animal) {
+        validateElastic();
+        final var animalElastic = AnimalMapper.entityToElasticDTO(AnimalMapper.dataToEntity(animal, null));
+        final var saved = animalElasticRepository.get().save(animalElastic);
         log.info("Animal with id: " + saved.getId() + " created in elasticsearch");
     }
 
@@ -96,12 +107,13 @@ public class AnimalServiceImpl implements AnimalService {
     @Override
     @Transactional
     public void updateElastic(Long id, AnimalData animalData) {
+        validateElastic();
         final var animalToUpdate = getByIdElastic(id);
         animalToUpdate.setName(animalData.getName());
         animalToUpdate.setVenomous(animalData.isVenomous());
         animalToUpdate.setTypePowerSupply(animalData.getTypePowerSupply().name());
         animalToUpdate.setKindAnimal(animalData.getKindAnimal().name());
-        animalElasticRepository.save(animalToUpdate);
+        animalElasticRepository.get().save(animalToUpdate);
     }
 
     @Override
@@ -112,7 +124,8 @@ public class AnimalServiceImpl implements AnimalService {
 
     @Override
     public AnimalElasticDTO getByIdElastic(Long id) {
-        return animalElasticRepository.findById(id)
+        validateElastic();
+        return animalElasticRepository.get().findById(id)
                 .orElseThrow(() -> new OperationException(ApiErrors.ANIMAL_ELASTIC_NOT_FOUND));
     }
 
@@ -127,8 +140,9 @@ public class AnimalServiceImpl implements AnimalService {
     @Override
     @Transactional
     public void deleteElastic(Long id) {
+        validateElastic();
         final var animalToDelete = getByIdElastic(id);
-        animalElasticRepository.delete(animalToDelete);
+        animalElasticRepository.get().delete(animalToDelete);
     }
 
     @Override
