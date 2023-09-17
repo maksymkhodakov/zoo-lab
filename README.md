@@ -17,7 +17,7 @@ This Google Drive is used to store all videos regarding all phases: [link](https
 ---
 ### Postman
 For automatic testing of WebAPI is recommended to use Postman.
-To recreate a collection in your Postman app, use [this](https://drive.google.com/file/d/12LD66lorETfunYp6czNcedUubCvnTrcH/view) json file import collection with all appropriate automatic API tests.
+To recreate a collection in your Postman app, use [this](https://drive.google.com/file/d/1wjwz37bV4NKeEBbILof0P9leJ5weAzTh/view?usp=drive_link) json file import collection with all appropriate automatic API tests.
 
 ---
 ### Swagger
