@@ -32,3 +32,20 @@ build/
 ### VS Code ###
 .vscode/
 /src/main/resources/application-dev.properties
+/es/data/_state/_t.cfe
+/es/data/_state/_t.cfs
+/es/data/_state/_t.si
+/es/logs/gc.log
+/es/logs/gc.log.00
+/es/logs/gc.log.01
+/es/logs/gc.log.02
+/es/logs/gc.log.03
+/es/logs/gc.log.04
+/es/data/_state/manifest-1.st
+/es/data/node.lock
+/es/data/_state/node-1.st
+/es/data/nodes
+/es/data/snapshot_cache/segments_2
+/es/data/_state/segments_10
+/es/data/_state/write.lock
+/es/data/snapshot_cache/write.lock
