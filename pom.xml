@@ -20,6 +20,7 @@
         <azure-storage-blob.version>12.22.1</azure-storage-blob.version>
         <jaxb-api.version>2.4.0-b180830.0359</jaxb-api.version>
         <spring-boot-starter-cache.version>2.4.0</spring-boot-starter-cache.version>
+        <azure-storage-queue.version>12.11.2</azure-storage-queue.version>
     </properties>
     <dependencies>
         <dependency>
@@ -77,6 +78,11 @@
             <groupId>com.azure</groupId>
             <artifactId>azure-storage-blob</artifactId>
             <version>${azure-storage-blob.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-storage-queue</artifactId>
+            <version>${azure-storage-queue.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.xml.bind</groupId>

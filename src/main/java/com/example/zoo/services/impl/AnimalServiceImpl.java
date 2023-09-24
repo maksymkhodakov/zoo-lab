@@ -1,5 +1,6 @@
 package com.example.zoo.services.impl;
 
+import com.example.zoo.queue.QueueService;
 import com.example.zoo.search.dto.AnimalElasticDTO;
 import com.example.zoo.search.repositories.AnimalElasticRepository;
 import com.example.zoo.storage.service.StorageService;
@@ -44,6 +45,7 @@ public class AnimalServiceImpl implements AnimalService {
     private final CountryRepository countryRepository;
     private final AnimalMapper animalMapper;
     private final StorageService storageService;
+    private final QueueService queueService;
 
     private void validateElastic() {
         if (Boolean.FALSE.equals(Boolean.parseBoolean(enable))) {
@@ -85,13 +87,17 @@ public class AnimalServiceImpl implements AnimalService {
                 .map(animalMapper::entityToDto);
     }
 
+    /**
+     * send animal to the Azure Queue in order to create
+     * @param animalData
+     * @param multipartFile
+     */
     @Override
     @Transactional
-    @CachePut(value = ANIMALS)
     public void save(AnimalData animalData, MultipartFile multipartFile) {
         final var animal = animalMapper.dataToEntity(animalData, multipartFile);
-        animalRepository.saveAndFlush(animal);
-        log.info("Animal with id: " + animal.getId() + " created");
+        queueService.send(animal);
+        log.info("Animal has been sent to the queue");
     }
 
     @Override
