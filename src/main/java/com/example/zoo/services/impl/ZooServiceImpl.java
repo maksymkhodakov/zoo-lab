@@ -19,12 +19,16 @@ import com.example.zoo.utils.SearchUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.example.zoo.config.CachingConfig.*;
 
 @Slf4j
 @Service
@@ -47,6 +51,7 @@ public class ZooServiceImpl implements ZooService {
     }
 
     @Override
+    @Cacheable(value = ZOO, cacheManager = "cacheManager")
     public List<ZooDTO> getAll() {
         return zooRepository.findAll()
                 .stream()
@@ -61,6 +66,7 @@ public class ZooServiceImpl implements ZooService {
     }
 
     @Override
+    @Cacheable(value = ZOO_ELASTIC, cacheManager = "cacheManager")
     public Page<ZooElasticDTO> getAllElastic(SearchDTO searchDTO) {
         validateElastic();
         return zooElasticRepository.get().findAll(SearchUtil.getPageable(searchDTO));
@@ -80,6 +86,7 @@ public class ZooServiceImpl implements ZooService {
 
     @Override
     @Transactional
+    @CachePut(value = ZOO)
     public void save(ZooData zooData) {
         final var country = countryRepository.findById(zooData.getLocationId())
                 .orElseThrow(() -> new OperationException(ApiErrors.COUNTRY_NOT_FOUND));
@@ -90,6 +97,7 @@ public class ZooServiceImpl implements ZooService {
 
     @Override
     @Transactional
+    @CachePut(value = ZOO_ELASTIC)
     public void saveElastic(ZooData zooData) {
         validateElastic();
         final var zooElasticDTO = ZooMapper.entityToElasticDTO(ZooMapper.dataToEntity(zooData, null));
@@ -110,6 +118,7 @@ public class ZooServiceImpl implements ZooService {
     }
 
     @Override
+    @Transactional
     public void updateElastic(Long id, ZooData zooData) {
         validateElastic();
         final var zoo = getByIdElastic(id);
@@ -121,12 +130,14 @@ public class ZooServiceImpl implements ZooService {
     }
 
     @Override
+    @Cacheable(value = ZOO, cacheManager = "cacheManager")
     public ZooDTO getById(Long id) {
         return ZooMapper.entityToDto(zooRepository.findById(id)
                 .orElseThrow(() -> new OperationException(ApiErrors.ZOO_NOT_FOUND)));
     }
 
     @Override
+    @Cacheable(value = ZOO_ELASTIC, cacheManager = "cacheManager")
     public ZooElasticDTO getByIdElastic(Long id) {
         validateElastic();
         return zooElasticRepository.get().findById(id)

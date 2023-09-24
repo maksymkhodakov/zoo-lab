@@ -18,6 +18,8 @@ import com.example.zoo.services.AnimalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +29,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import static com.example.zoo.config.CachingConfig.*;
 
 @Slf4j
 @Service
@@ -48,6 +52,7 @@ public class AnimalServiceImpl implements AnimalService {
     }
 
     @Override
+    @Cacheable(value = ANIMALS, cacheManager = "cacheManager")
     public List<AnimalDTO> getAll() {
         return animalRepository.findAll()
                 .stream()
@@ -56,6 +61,7 @@ public class AnimalServiceImpl implements AnimalService {
     }
 
     @Override
+    @Cacheable(value = ANIMALS_ELASTIC, cacheManager = "cacheManager")
     public Page<AnimalElasticDTO> getAllElastic(SearchDTO searchDTO) {
         validateElastic();
         return animalElasticRepository.get().findAll(SearchUtil.getPageable(searchDTO));
@@ -81,6 +87,7 @@ public class AnimalServiceImpl implements AnimalService {
 
     @Override
     @Transactional
+    @CachePut(value = ANIMALS)
     public void save(AnimalData animalData, MultipartFile multipartFile) {
         final var animal = animalMapper.dataToEntity(animalData, multipartFile);
         animalRepository.saveAndFlush(animal);
@@ -89,6 +96,7 @@ public class AnimalServiceImpl implements AnimalService {
 
     @Override
     @Transactional
+    @CachePut(value = ANIMALS_ELASTIC)
     public void createElastic(AnimalData animal) {
         validateElastic();
         final var animalElastic = AnimalMapper.entityToElasticDTO(animalMapper.dataToEntity(animal, null));
@@ -128,12 +136,14 @@ public class AnimalServiceImpl implements AnimalService {
     }
 
     @Override
+    @Cacheable(value = ANIMALS, cacheManager = "cacheManager")
     public AnimalDTO getById(Long id) {
         return animalMapper.entityToDto(animalRepository.findById(id)
                 .orElseThrow(() -> new OperationException(ApiErrors.ANIMAL_NOT_FOUND)));
     }
 
     @Override
+    @Cacheable(value = ANIMALS_ELASTIC, cacheManager = "cacheManager")
     public AnimalElasticDTO getByIdElastic(Long id) {
         validateElastic();
         return animalElasticRepository.get().findById(id)

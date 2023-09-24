@@ -15,6 +15,8 @@ import com.example.zoo.utils.SearchUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,8 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+import static com.example.zoo.config.CachingConfig.*;
 
 @Slf4j
 @Service
@@ -43,6 +47,7 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
+    @Cacheable(value = COUNTRIES, cacheManager = "cacheManager")
     public List<CountryDTO> getAll() {
         return countryRepository.findAll()
                 .stream()
@@ -51,6 +56,7 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
+    @Cacheable(value = COUNTRIES_ELASTIC, cacheManager = "cacheManager")
     public Page<CountryElasticDTO> getAllElastic(SearchDTO searchDTO) {
         validateElastic();
         return countryElasticRepository.get().findAll(SearchUtil.getPageable(searchDTO));
@@ -76,6 +82,7 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     @Transactional
+    @CachePut(value = COUNTRIES)
     public void save(CountryData countryData, MultipartFile multipartFile) throws IOException {
         final var country = CountryMapper.dataToEntity(countryData, multipartFile.getBytes());
         country.setCoordinates(coordinatesService.continentToCoordinates(countryData.getContinent()));
@@ -85,6 +92,7 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     @Transactional
+    @CachePut(value = COUNTRIES_ELASTIC)
     public void saveElastic(CountryData countryData) {
         validateElastic();
         final var countryElastic = CountryMapper.entityToElasticDTO(CountryMapper.dataToEntity(countryData, null));
@@ -115,12 +123,14 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
+    @Cacheable(value = COUNTRIES, cacheManager = "cacheManager")
     public CountryDTO getById(Long id) {
         return CountryMapper.entityToDto(countryRepository.findById(id)
                 .orElseThrow(() -> new OperationException(ApiErrors.COUNTRY_NOT_FOUND)));
     }
 
     @Override
+    @Cacheable(value = COUNTRIES_ELASTIC, cacheManager = "cacheManager")
     public CountryElasticDTO getByIdElastic(Long id) {
         validateElastic();
         return countryElasticRepository.get().findById(id)
@@ -136,6 +146,7 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
+    @Transactional
     public void deleteElastic(Long id) {
         validateElastic();
         final var country = getByIdElastic(id);
