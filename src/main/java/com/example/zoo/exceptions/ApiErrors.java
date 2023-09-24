@@ -16,8 +16,11 @@ public enum ApiErrors {
     ANIMAL_ELASTIC_NOT_FOUND("Animal with provided id was not found in Elasticsearch storage"),
     COUNTRY_ELASTIC_NOT_FOUND("Country with provided id was not found in Elasticsearch storage"),
     ZOO_ELASTIC_NOT_FOUND("Zoo with provided id was not found in Elasticsearch storage"),
+    ELASTIC_DISABLED("Due to Microsoft student subscription policy, elasticsearch is disabled in prod environment"),
 
-    ELASTIC_DISABLED("Due to Microsoft student subscription policy, elasticsearch is disabled in prod environment");
+    // Azure Storage
+    DOWNLOAD_FILE_FAILED("Error occurred during file downloading from the Azure Storage."),
+    UPLOAD_FILE_ERROR("Error occurred during file upload to the Azure Storage");
 
     private final String message;
 }

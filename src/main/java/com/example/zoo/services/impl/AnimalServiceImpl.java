@@ -2,6 +2,7 @@ package com.example.zoo.services.impl;
 
 import com.example.zoo.search.dto.AnimalElasticDTO;
 import com.example.zoo.search.repositories.AnimalElasticRepository;
+import com.example.zoo.storage.service.StorageService;
 import com.example.zoo.utils.SearchUtil;
 import com.example.zoo.data.AnimalData;
 import com.example.zoo.dto.AnimalDTO;
@@ -24,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -36,6 +38,8 @@ public class AnimalServiceImpl implements AnimalService {
     private final Optional<AnimalElasticRepository> animalElasticRepository;
     private final AnimalRepository animalRepository;
     private final CountryRepository countryRepository;
+    private final AnimalMapper animalMapper;
+    private final StorageService storageService;
 
     private void validateElastic() {
         if (Boolean.FALSE.equals(Boolean.parseBoolean(enable))) {
@@ -47,7 +51,7 @@ public class AnimalServiceImpl implements AnimalService {
     public List<AnimalDTO> getAll() {
         return animalRepository.findAll()
                 .stream()
-                .map(AnimalMapper::entityToDto)
+                .map(animalMapper::entityToDto)
                 .toList();
     }
 
@@ -72,13 +76,13 @@ public class AnimalServiceImpl implements AnimalService {
     @Override
     public Page<AnimalDTO> getAll(SearchDTO searchDTO) {
         return animalRepository.findAll(SearchUtil.getPageable(searchDTO))
-                .map(AnimalMapper::entityToDto);
+                .map(animalMapper::entityToDto);
     }
 
     @Override
     @Transactional
-    public void save(AnimalData animalData, MultipartFile multipartFile) throws IOException {
-        final var animal = AnimalMapper.dataToEntity(animalData, multipartFile.getBytes());
+    public void save(AnimalData animalData, MultipartFile multipartFile) {
+        final var animal = animalMapper.dataToEntity(animalData, multipartFile);
         animalRepository.saveAndFlush(animal);
         log.info("Animal with id: " + animal.getId() + " created");
     }
@@ -87,7 +91,7 @@ public class AnimalServiceImpl implements AnimalService {
     @Transactional
     public void createElastic(AnimalData animal) {
         validateElastic();
-        final var animalElastic = AnimalMapper.entityToElasticDTO(AnimalMapper.dataToEntity(animal, null));
+        final var animalElastic = AnimalMapper.entityToElasticDTO(animalMapper.dataToEntity(animal, null));
         final var saved = animalElasticRepository.get().save(animalElastic);
         log.info("Animal with id: " + saved.getId() + " created in elasticsearch");
     }
@@ -100,8 +104,15 @@ public class AnimalServiceImpl implements AnimalService {
         animalToUpdate.setName(animalData.getName());
         animalToUpdate.setVenomous(animalData.isVenomous());
         animalToUpdate.setTypePowerSupply(animalData.getTypePowerSupply());
-        animalToUpdate.setPhoto(multipartFile.getBytes());
         animalToUpdate.setKindAnimal(animalData.getKindAnimal());
+        animalToUpdate.setPhotoPath(updatePhoto(animalToUpdate.getPhotoPath(), multipartFile));
+    }
+
+    private String updatePhoto(String photoPath, MultipartFile multipartFile) {
+        if (!Objects.isNull(photoPath) && !photoPath.isEmpty()) {
+            storageService.deletePhoto(photoPath);
+        }
+        return storageService.uploadPhoto(multipartFile);
     }
 
     @Override
@@ -118,7 +129,7 @@ public class AnimalServiceImpl implements AnimalService {
 
     @Override
     public AnimalDTO getById(Long id) {
-        return AnimalMapper.entityToDto(animalRepository.findById(id)
+        return animalMapper.entityToDto(animalRepository.findById(id)
                 .orElseThrow(() -> new OperationException(ApiErrors.ANIMAL_NOT_FOUND)));
     }
 

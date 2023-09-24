@@ -33,9 +33,11 @@ public class Animal extends TimestampEntity {
             inverseJoinColumns = @JoinColumn(name = "country_id"))
     private List<Country> countries = new ArrayList<>();
 
-    @Lob
-    @Column(length = Integer.MAX_VALUE)
-    private byte[] photo;
+    /**
+     * for storing photos for animals Azure Blob Storage is used
+     */
+    @Column(name = "photo_path")
+    private String photoPath;
 
     public void addCountry(Country country) {
         countries.add(country);

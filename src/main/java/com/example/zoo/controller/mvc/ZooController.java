@@ -25,6 +25,7 @@ public class ZooController {
     ZooRepository zooRepository;
     CountryRepository countryRepository;
     AnimalRepository animalRepository;
+    AnimalMapper animalMapper;
 
     @GetMapping("/getAll")
     public String getAll(Model model) {
@@ -107,7 +108,7 @@ public class ZooController {
                 .orElseThrow(() -> new OperationException(ApiErrors.ZOO_NOT_FOUND));
         var animals = zoo.getAnimals()
                 .stream()
-                .map(AnimalMapper::entityToDto)
+                .map(animalMapper::entityToDto)
                 .toList();
         model.addAttribute("zooId", id);
         model.addAttribute("listAnimals", animals);
@@ -131,7 +132,7 @@ public class ZooController {
     public String animals(@PathVariable Long id, Model model) {
         var animals = animalRepository.findAll()
                 .stream()
-                .map(AnimalMapper::entityToDto)
+                .map(animalMapper::entityToDto)
                 .toList();
         model.addAttribute("zooId", id);
         model.addAttribute("listAnimals", animals);

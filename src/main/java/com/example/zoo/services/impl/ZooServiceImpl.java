@@ -38,6 +38,7 @@ public class ZooServiceImpl implements ZooService {
     private final ZooRepository zooRepository;
     private final CountryRepository countryRepository;
     private final AnimalRepository animalRepository;
+    private final AnimalMapper animalMapper;
 
     private void validateElastic() {
         if (Boolean.FALSE.equals(Boolean.parseBoolean(enable))) {
@@ -152,7 +153,7 @@ public class ZooServiceImpl implements ZooService {
         final var zoo = zooRepository.findById(id)
                 .orElseThrow(() -> new OperationException(ApiErrors.ZOO_NOT_FOUND));
         return zoo.getAnimals()
-                .stream().map(AnimalMapper::entityToDto)
+                .stream().map(animalMapper::entityToDto)
                 .toList();
     }
 
