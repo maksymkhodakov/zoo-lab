@@ -9,7 +9,6 @@ import com.example.zoo.integratons.telegram.domain.dto.ZooTelegramDTO;
 import com.example.zoo.search.dto.ZooElasticDTO;
 import lombok.experimental.UtilityClass;
 
-import java.util.stream.Collectors;
 
 @UtilityClass
 public class ZooMapper {

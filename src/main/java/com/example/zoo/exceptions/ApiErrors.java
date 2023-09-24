@@ -20,7 +20,10 @@ public enum ApiErrors {
 
     // Azure Storage
     DOWNLOAD_FILE_FAILED("Error occurred during file downloading from the Azure Storage."),
-    UPLOAD_FILE_ERROR("Error occurred during file upload to the Azure Storage");
+    UPLOAD_FILE_ERROR("Error occurred during file upload to the Azure Storage"),
+
+    // Azure Queue
+    ERROR_OCCURRED_JSON_ERROR("Error occurred while parsing a json from Azure queue");
 
     private final String message;
 }
