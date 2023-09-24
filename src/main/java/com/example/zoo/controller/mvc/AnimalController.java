@@ -10,6 +10,7 @@ import com.example.zoo.mapper.AnimalMapper;
 import com.example.zoo.mapper.CountryMapper;
 import com.example.zoo.repository.AnimalRepository;
 import com.example.zoo.repository.CountryRepository;
+import com.example.zoo.storage.service.StorageService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Controller
@@ -30,12 +32,14 @@ import java.util.stream.Collectors;
 public class AnimalController {
     AnimalRepository animalRepository;
     CountryRepository countryRepository;
+    StorageService storageService;
+    AnimalMapper animalMapper;
 
     @GetMapping("/getAll")
     public String getAll(Model model) {
         var animals = animalRepository.findAll()
                 .stream()
-                .map(AnimalMapper::entityToDto)
+                .map(animalMapper::entityToDto)
                 .toList();
         model.addAttribute("lostAnimals", animals);
         return "indexAnimals";
@@ -60,7 +64,7 @@ public class AnimalController {
                 .kindAnimal(kindAnimal)
                 .venomous(venomous)
                 .typePowerSupply(typePowerSupply)
-                .photo(file.getBytes())
+                .photoPath(storageService.uploadPhoto(file))
                 .build();
 
         animalRepository.saveAndFlush(animal);
@@ -80,7 +84,7 @@ public class AnimalController {
     public String updateAnimal(@PathVariable Long id, Model model) {
         var animal = animalRepository.findById(id)
                 .orElseThrow(() -> new OperationException(ApiErrors.ANIMAL_NOT_FOUND));
-        var animalDTO = AnimalMapper.entityToDto(animal);
+        var animalDTO = animalMapper.entityToDto(animal);
         model.addAttribute("animal", animalDTO);
         model.addAttribute("kind", KindAnimal.values());
         model.addAttribute("supply", TypePowerSupply.values());
@@ -103,10 +107,18 @@ public class AnimalController {
         animal.setTypePowerSupply(typePowerSupply);
 
         if (file.getBytes().length != 0) {
-            animal.setPhoto(file.getBytes());
+            animal.setPhotoPath(updatePhoto(animal.getPhotoPath(), file));
         }
 
         return "redirect:/animal/getAll";
+    }
+
+
+    private String updatePhoto(String photoPath, MultipartFile multipartFile) {
+        if (!Objects.isNull(photoPath) && !photoPath.isEmpty()) {
+            storageService.deletePhoto(photoPath);
+        }
+        return storageService.uploadPhoto(multipartFile);
     }
 
     @GetMapping("/countries/{id}")

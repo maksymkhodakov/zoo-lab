@@ -4,12 +4,17 @@ import com.example.zoo.data.AnimalData;
 import com.example.zoo.dto.AnimalDTO;
 import com.example.zoo.entity.Animal;
 import com.example.zoo.search.dto.AnimalElasticDTO;
-import lombok.experimental.UtilityClass;
+import com.example.zoo.storage.service.StorageService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.stream.Collectors;
 
-@UtilityClass
+@Component
+@RequiredArgsConstructor
 public class AnimalMapper {
+    private final StorageService storageService;
+
     public AnimalDTO entityToDto(final Animal animal) {
         return AnimalDTO.builder()
                 .id(animal.getId())
@@ -17,21 +22,21 @@ public class AnimalMapper {
                 .kindAnimal(animal.getKindAnimal())
                 .typePowerSupply(animal.getTypePowerSupply())
                 .venomous(animal.isVenomous())
-                .photo(animal.getPhoto())
+                .photo(storageService.downloadPhoto(animal.getPhotoPath()))
                 .build();
     }
 
-    public Animal dataToEntity(final AnimalData animal, final byte[] bytes) {
+    public Animal dataToEntity(final AnimalData animal, final MultipartFile multipartFile) {
         return Animal.builder()
                 .name(animal.getName())
                 .kindAnimal(animal.getKindAnimal())
                 .typePowerSupply(animal.getTypePowerSupply())
                 .venomous(animal.isVenomous())
-                .photo(bytes)
+                .photoPath(storageService.uploadPhoto(multipartFile))
                 .build();
     }
 
-    public AnimalElasticDTO entityToElasticDTO(Animal animal) {
+    public static AnimalElasticDTO entityToElasticDTO(Animal animal) {
         return AnimalElasticDTO.builder()
                 .id(animal.getId())
                 .createDate(animal.getCreateDate().toLocalDateTime().toLocalDate())
