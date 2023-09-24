@@ -19,6 +19,7 @@
         <springdoc-openapi-starter-webmvc-ui.version>2.0.4</springdoc-openapi-starter-webmvc-ui.version>
         <azure-storage-blob.version>12.22.1</azure-storage-blob.version>
         <jaxb-api.version>2.4.0-b180830.0359</jaxb-api.version>
+        <spring-boot-starter-cache.version>2.4.0</spring-boot-starter-cache.version>
     </properties>
     <dependencies>
         <dependency>
@@ -81,6 +82,11 @@
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
             <version>${jaxb-api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+            <version>${spring-boot-starter-cache.version}</version>
         </dependency>
     </dependencies>
 
