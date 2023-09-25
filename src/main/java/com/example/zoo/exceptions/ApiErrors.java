@@ -23,7 +23,10 @@ public enum ApiErrors {
     UPLOAD_FILE_ERROR("Error occurred during file upload to the Azure Storage"),
 
     // Azure Queue
-    ERROR_OCCURRED_JSON_ERROR("Error occurred while parsing a json from Azure queue");
+    ERROR_OCCURRED_JSON_ERROR("Error occurred while parsing a json from Azure queue"),
+
+    // OAuth2 user not found
+    USER_NOT_FOUND("User not found");
 
     private final String message;
 }

@@ -1,4 +1,4 @@
-package com.example.zoo.integratons.maps.config;
+package com.example.zoo.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

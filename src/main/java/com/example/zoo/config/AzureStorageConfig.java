@@ -1,4 +1,4 @@
-package com.example.zoo.storage.config;
+package com.example.zoo.config;
 
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;

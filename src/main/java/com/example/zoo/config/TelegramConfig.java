@@ -1,4 +1,4 @@
-package com.example.zoo.integratons.telegram.config;
+package com.example.zoo.config;
 
 import com.example.zoo.integratons.telegram.service.TelegramService;
 import org.springframework.context.annotation.Bean;
