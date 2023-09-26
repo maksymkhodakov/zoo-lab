@@ -1,10 +1,9 @@
 package com.example.zoo.entity;
 
+import com.example.zoo.converters.FeatureConverter;
+import com.example.zoo.dto.FeatureDTO;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -14,6 +13,7 @@ import java.util.Map;
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
@@ -32,8 +32,9 @@ public class User extends TimestampEntity implements UserDetails, OAuth2User {
     private boolean accountNonLocked;
     private boolean credentialsNonExpired;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
-    private List<Features> authorities;
+    @Column
+    @Convert(converter = FeatureConverter.class)
+    private List<FeatureDTO> authorities;
 
     @Override
     public <A> A getAttribute(String name) {

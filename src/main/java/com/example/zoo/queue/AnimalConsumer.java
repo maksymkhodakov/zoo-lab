@@ -29,29 +29,34 @@ public class AnimalConsumer implements InitializingBean {
     @Value("${queue.pooling-timeout}")
     private int poolingTimeout;
 
+    @Value("${queue.enabled}")
+    private String queueEnabled;
+
     private final QueueService queueService;
     private final AnimalRepository animalRepository;
 
     @Override
     public void afterPropertiesSet() {
-        CompletableFuture.runAsync(() -> {
-            log.info("Queue listener has started");
-            List<CompletableFuture<Void>> todos = new ArrayList<>();
-            while (true) {
-                try {
-                    ThreadUtils.sleep(Duration.ofMillis(poolingTimeout));
-                    queueService.receive(batchSize, Duration.ofMinutes(timeout), Animal.class)
-                            .forEach(animal -> todos.add(animalCreationTask(animal)));
-                    CompletableFuture.allOf(todos.toArray(CompletableFuture[]::new))
-                            .orTimeout(timeout, TimeUnit.MINUTES).join();
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                    log.info("Error occurred during animals consumption");
-                } finally {
-                    todos.clear();
+        if (Boolean.TRUE.equals(Boolean.parseBoolean(queueEnabled))) {
+            CompletableFuture.runAsync(() -> {
+                log.info("Queue listener has started");
+                List<CompletableFuture<Void>> todos = new ArrayList<>();
+                while (true) {
+                    try {
+                        ThreadUtils.sleep(Duration.ofMillis(poolingTimeout));
+                        queueService.receive(batchSize, Duration.ofMinutes(timeout), Animal.class)
+                                .forEach(animal -> todos.add(animalCreationTask(animal)));
+                        CompletableFuture.allOf(todos.toArray(CompletableFuture[]::new))
+                                .orTimeout(timeout, TimeUnit.MINUTES).join();
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                        log.info("Error occurred during animals consumption");
+                    } finally {
+                        todos.clear();
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     private CompletableFuture<Void> animalCreationTask(QueueService.Message<Animal> message) {
