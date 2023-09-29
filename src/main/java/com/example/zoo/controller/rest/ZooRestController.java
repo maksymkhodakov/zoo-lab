@@ -12,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,21 +25,25 @@ public class ZooRestController {
     ZooService zooService;
 
     @GetMapping("/getAll")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_BASIC_USER)")
     public ResponseDTO<List<ZooDTO>> getAll() {
         return ResponseDTO.ofData(zooService.getAll(), ResponseDTO.ResponseStatus.OK);
     }
 
     @GetMapping("/pagination/getAll")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_BASIC_USER)")
     public ResponseDTO<Page<ZooDTO>> paginationGetAll(@RequestBody SearchDTO searchDTO) {
         return ResponseDTO.ofData(zooService.getAll(searchDTO), ResponseDTO.ResponseStatus.OK);
     }
 
     @GetMapping("/elastic/getAll")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_ADMIN)")
     public ResponseDTO<Page<ZooElasticDTO>> getAll(@RequestBody SearchDTO searchDTO) {
         return ResponseDTO.ofData(zooService.getAllElastic(searchDTO), ResponseDTO.ResponseStatus.OK);
     }
 
     @GetMapping("/elastic/getByName")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_ADMIN)")
     public ResponseDTO<Page<ZooElasticDTO>> getByName(@RequestParam String name,
                                                       @RequestBody SearchDTO searchDTO) {
         try {
@@ -49,6 +54,7 @@ public class ZooRestController {
     }
 
     @GetMapping("/elastic/getBySquareRange")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_ADMIN)")
     public ResponseDTO<Page<ZooElasticDTO>> getBySquareRange(@RequestParam double from,
                                                              @RequestParam double to,
                                                              @RequestBody SearchDTO searchDTO) {
@@ -60,6 +66,7 @@ public class ZooRestController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_BASIC_USER)")
     public ResponseDTO<ZooDTO> getById(@PathVariable Long id) {
         try {
             return ResponseDTO.ofData(zooService.getById(id), ResponseDTO.ResponseStatus.OK);
@@ -69,6 +76,7 @@ public class ZooRestController {
     }
 
     @GetMapping("/elastic/{id}")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_ADMIN)")
     public ResponseDTO<ZooElasticDTO> getByIdElastic(@PathVariable Long id) {
         try {
             return ResponseDTO.ofData(zooService.getByIdElastic(id), ResponseDTO.ResponseStatus.OK);
@@ -78,6 +86,7 @@ public class ZooRestController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_BASIC_USER)")
     public ResponseDTO<Void> create(@RequestPart("data") ZooData zooData) {
         try {
             zooService.save(zooData);
@@ -88,6 +97,7 @@ public class ZooRestController {
     }
 
     @PostMapping("/elastic/create")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_ADMIN)")
     public ResponseDTO<Void> createElastic(@RequestPart("data") ZooData zooData) {
         try {
             zooService.saveElastic(zooData);
@@ -98,6 +108,7 @@ public class ZooRestController {
     }
 
     @PutMapping("/update")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_BASIC_USER)")
     public ResponseDTO<Void> update(@RequestPart("id") Long id,
                                     @RequestPart("data") ZooData zooData) {
         try {
@@ -109,6 +120,7 @@ public class ZooRestController {
     }
 
     @PutMapping("/elastic/update")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_ADMIN)")
     public ResponseDTO<Void> updateElastic(@RequestPart("id") Long id,
                                            @RequestPart("data") ZooData zooData) {
         try {
@@ -120,6 +132,7 @@ public class ZooRestController {
     }
 
     @DeleteMapping("/delete")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_BASIC_USER)")
     public ResponseDTO<Void> delete(@RequestParam Long id) {
         try {
             zooService.delete(id);
@@ -130,6 +143,7 @@ public class ZooRestController {
     }
 
     @DeleteMapping("/elastic/delete")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_ADMIN)")
     public ResponseDTO<Void> deleteElastic(@RequestParam Long id) {
         try {
             zooService.deleteElastic(id);
@@ -140,6 +154,7 @@ public class ZooRestController {
     }
 
     @GetMapping("/animals/{id}")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_BASIC_USER)")
     public ResponseDTO<List<AnimalDTO>> getAllAnimals(@PathVariable Long id) {
         try {
             return ResponseDTO.ofData(zooService.getAllAnimals(id), ResponseDTO.ResponseStatus.OK);
@@ -149,6 +164,7 @@ public class ZooRestController {
     }
 
     @PostMapping("/addAnimal")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_BASIC_USER)")
     public ResponseDTO<Void> addAnimal(@RequestParam("zooId") Long id,
                                        @RequestParam("animalId") Long animalId) {
         try {
@@ -160,6 +176,7 @@ public class ZooRestController {
     }
 
     @DeleteMapping("/deleteAnimal/{animalId}/{zooId}")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_BASIC_USER)")
     public ResponseDTO<Void> deleteAnimal(@PathVariable Long animalId,
                                           @PathVariable Long zooId) {
         try {

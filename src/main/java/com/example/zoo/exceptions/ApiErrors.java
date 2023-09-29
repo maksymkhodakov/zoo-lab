@@ -25,8 +25,10 @@ public enum ApiErrors {
     // Azure Queue
     ERROR_OCCURRED_JSON_ERROR("Error occurred while parsing a json from Azure queue"),
 
-    // OAuth2 user not found
-    USER_NOT_FOUND("User not found");
+    // Security
+    USER_NOT_FOUND("User not found"),
+    NO_EMAIL("No email was extracted from OAuth2 provider"),
+    USER_EXISTS("User exists by this email");
 
     private final String message;
 }
