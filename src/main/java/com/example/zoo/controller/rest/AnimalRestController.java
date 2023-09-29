@@ -12,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,21 +27,25 @@ public class AnimalRestController {
     AnimalService animalService;
 
     @GetMapping("/getAll")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_BASIC_USER)")
     public ResponseDTO<List<AnimalDTO>> getAll() {
         return ResponseDTO.ofData(animalService.getAll(), ResponseDTO.ResponseStatus.OK);
     }
 
     @GetMapping("/elastic/getAll")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_ADMIN)")
     public ResponseDTO<Page<AnimalElasticDTO>> getAllElastic(@RequestBody SearchDTO searchDTO) {
         return ResponseDTO.ofData(animalService.getAllElastic(searchDTO), ResponseDTO.ResponseStatus.OK);
     }
 
     @GetMapping("/pagination/getAll")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_BASIC_USER)")
     public ResponseDTO<Page<AnimalDTO>> paginationGetAll(@RequestBody SearchDTO searchDTO) {
         return ResponseDTO.ofData(animalService.getAll(searchDTO), ResponseDTO.ResponseStatus.OK);
     }
 
     @GetMapping("/elastic/findByName/{name}")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_ADMIN)")
     public ResponseDTO<Page<AnimalElasticDTO>> getByName(@PathVariable String name, @RequestBody SearchDTO searchDTO) {
         try {
             return ResponseDTO.ofData(animalService.getByNameElastic(name, searchDTO), ResponseDTO.ResponseStatus.OK);
@@ -50,6 +55,7 @@ public class AnimalRestController {
     }
 
     @GetMapping("/elastic/findByKindAndType")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_ADMIN)")
     public ResponseDTO<Page<AnimalElasticDTO>> getByKindAndType(@RequestParam String kind,
                                                                 @RequestParam String type,
                                                                 @RequestBody SearchDTO searchDTO) {
@@ -61,6 +67,7 @@ public class AnimalRestController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_BASIC_USER)")
     public ResponseDTO<AnimalDTO> getById(@PathVariable Long id) {
         try {
             return ResponseDTO.ofData(animalService.getById(id), ResponseDTO.ResponseStatus.OK);
@@ -70,6 +77,7 @@ public class AnimalRestController {
     }
 
     @GetMapping("/elastic/{id}")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_ADMIN)")
     public ResponseDTO<AnimalElasticDTO> getByIdElastic(@PathVariable Long id) {
         try {
             return ResponseDTO.ofData(animalService.getByIdElastic(id), ResponseDTO.ResponseStatus.OK);
@@ -79,6 +87,7 @@ public class AnimalRestController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_BASIC_USER)")
     public ResponseDTO<Void> create(@RequestPart("data") AnimalData animalData,
                                     @RequestPart("file") MultipartFile multipartFile) {
         try {
@@ -90,6 +99,7 @@ public class AnimalRestController {
     }
 
     @PostMapping("/elastic/create")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_ADMIN)")
     public ResponseDTO<Void> createElastic(@RequestPart("data") AnimalData animalData) {
         try {
             animalService.createElastic(animalData);
@@ -100,6 +110,7 @@ public class AnimalRestController {
     }
 
     @PutMapping("/update")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_BASIC_USER)")
     public ResponseDTO<Void> update(@RequestPart("id") Long id,
                                     @RequestPart("data") AnimalData animalData,
                                     @RequestPart("file") MultipartFile multipartFile) {
@@ -112,6 +123,7 @@ public class AnimalRestController {
     }
 
     @PutMapping("/elastic/update")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_ADMIN)")
     public ResponseDTO<Void> updateElastic(@RequestPart("id") Long id, @RequestPart("data") AnimalData animalData) {
         try {
             animalService.updateElastic(id, animalData);
@@ -122,6 +134,7 @@ public class AnimalRestController {
     }
 
     @DeleteMapping("/delete")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_BASIC_USER)")
     public ResponseDTO<Void> delete(@RequestParam Long id) {
         try {
             animalService.delete(id);
@@ -132,6 +145,7 @@ public class AnimalRestController {
     }
 
     @DeleteMapping("/elastic/delete")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_ADMIN)")
     public ResponseDTO<Void> deleteElastic(@RequestParam Long id) {
         try {
             animalService.deleteElastic(id);
@@ -142,11 +156,13 @@ public class AnimalRestController {
     }
 
     @GetMapping("/countries/{id}")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_BASIC_USER)")
     public ResponseDTO<List<CountryDTO>> countries(@PathVariable Long id) {
         return ResponseDTO.ofData(animalService.getRelatedCountries(id), ResponseDTO.ResponseStatus.OK);
     }
 
     @DeleteMapping("/deleteCountry/{countryId}/{id}")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_BASIC_USER)")
     public ResponseDTO<Void> deleteCountry(@PathVariable Long countryId, @PathVariable Long id) {
         try {
             animalService.deleteCountry(countryId, id);
@@ -157,6 +173,7 @@ public class AnimalRestController {
     }
 
     @PutMapping("/addCountryToAnimal")
+    @PreAuthorize("hasPermission(null, T(com.example.zoo.enums.Privilege).ROLE_BASIC_USER)")
     public ResponseDTO<Void> addCountry(@RequestParam("id") Long animalId,
                                         @RequestParam("countryId") Long countryId) {
         try {

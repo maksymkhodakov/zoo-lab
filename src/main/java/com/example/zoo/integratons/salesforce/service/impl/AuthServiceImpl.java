@@ -1,6 +1,6 @@
 package com.example.zoo.integratons.salesforce.service.impl;
 
-import com.example.zoo.integratons.salesforce.config.SalesforceConfig;
+import com.example.zoo.config.SalesforceConfig;
 import com.example.zoo.integratons.salesforce.domail.LoginResponse;
 import com.example.zoo.integratons.salesforce.service.AuthService;
 import lombok.RequiredArgsConstructor;

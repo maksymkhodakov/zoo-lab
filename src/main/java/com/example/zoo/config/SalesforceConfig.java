@@ -1,4 +1,4 @@
-package com.example.zoo.integratons.salesforce.config;
+package com.example.zoo.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

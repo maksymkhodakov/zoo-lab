@@ -38,7 +38,10 @@ import static com.example.zoo.config.CachingConfig.*;
 @RequiredArgsConstructor
 public class AnimalServiceImpl implements AnimalService {
     @Value("${enable-elasticsearch}")
-    private String enable;
+    private String elasticEnable;
+
+    @Value("${queue.enabled}")
+    private String queueEnabled;
 
     private final Optional<AnimalElasticRepository> animalElasticRepository;
     private final AnimalRepository animalRepository;
@@ -48,7 +51,7 @@ public class AnimalServiceImpl implements AnimalService {
     private final QueueService queueService;
 
     private void validateElastic() {
-        if (Boolean.FALSE.equals(Boolean.parseBoolean(enable))) {
+        if (Boolean.FALSE.equals(Boolean.parseBoolean(elasticEnable))) {
             throw new OperationException(ApiErrors.ELASTIC_DISABLED);
         }
     }
@@ -96,8 +99,12 @@ public class AnimalServiceImpl implements AnimalService {
     @Transactional
     public void save(AnimalData animalData, MultipartFile multipartFile) {
         final var animal = animalMapper.dataToEntity(animalData, multipartFile);
-        queueService.send(animal);
-        log.info("Animal has been sent to the queue");
+        if (Boolean.FALSE.equals(Boolean.parseBoolean(queueEnabled))) {
+            log.info("Azure queue is disabled");
+        } else {
+            queueService.send(animal);
+            log.info("Animal has been sent to the queue");
+        }
     }
 
     @Override
