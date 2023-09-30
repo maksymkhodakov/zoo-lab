@@ -5,12 +5,32 @@
   <title>List of Animals</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+  <style>
+    body {
+      padding: 20px;
+    }
+    .table tbody tr:nth-child(odd) {
+      background-color: #f2f2f2;
+    }
+    .btn {
+      margin-right: 5px;
+    }
+    .form-group {
+      margin-top: 10px;
+    }
+    .container {
+      background-color: #ffffff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+  </style>
   <div th:replace="navbar.html"></div>
 </head>
 <body>
 <div class="container">
   <h1>List of Animals</h1>
-  <a class="btn btn-primary" th:href="@{/animal/create}">Add Animal</a>
+  <a class="btn btn-primary mb-3" th:href="@{/animal/create}">Add Animal</a>
   <table class="table table-bordered">
     <thead class="thead-dark">
     <tr>
@@ -22,7 +42,7 @@
       <th scope="col">Actions</th>
     </tr>
     </thead>
-    <canvas id="kindOfAnimalChart" width="400" height="100"></canvas>
+    <canvas id="kindOfAnimalChart" width="400" height="100" class="mb-3"></canvas>
     <tbody>
     <tr th:each="animal : ${lostAnimals}">
       <td th:text="${animal.name}"></td>
@@ -30,11 +50,11 @@
       <td th:text="${animal.venomous ? 'Yes' : 'No'}"></td>
       <td th:text="${animal.typePowerSupply}"></td>
       <td>
-        <img th:if="${animal.photo != null}" th:src="'data:image/jpeg;base64,' + ${animal.generateBase64Image()}" width="200" height="150" alt="Animal Photo" />
+        <img th:if="${animal.photo != null}" th:src="'data:image/jpeg;base64,' + ${animal.generateBase64Image()}" width="200" height="150" alt="Animal Photo"/>
       </td>
       <td>
         <form th:action="@{/animal/delete}" method="post">
-          <input type="hidden" name="id" th:value="${animal.id}" />
+          <input type="hidden" name="id" th:value="${animal.id}"/>
           <button type="submit" class="btn btn-danger">Delete</button>
         </form>
         <a class="btn btn-info" th:href="@{'/animal/update/' + ${animal.id}}">Edit</a>

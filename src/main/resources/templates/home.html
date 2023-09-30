@@ -2,17 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>List of Countries</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Zoo Explorer</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-image: url('https://source.unsplash.com/1920x1080/?zoo,animal');
+            background-size: cover;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .zoo-header {
+            background-color: rgba(255, 171, 64, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .zoo-image {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
     <div th:replace="navbar.html"></div>
 </head>
 <body>
 <div class="container mt-5">
-    <h1> Hello dear user! Welcome on my zoo website! </h1>
-    <br>
-    <h1> Please feel free to navigate this website using navigation bar at the top )</h1>
-    <br>
-    <p style="text-align:center;"><img src="https://i.stack.imgur.com/SBv4T.gif" alt="this slowpoke moves"  width="450" /></p>
+    <div class="zoo-header">
+        <h1>Hello dear user! Welcome to my zoo website!</h1>
+        <h2>Please feel free to navigate this website using the navigation bar at the top</h2>
+    </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -5,13 +5,30 @@
     <title>List of Countries</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
-    <link >
+    <style>
+        body {
+            padding: 20px;
+        }
+        .table tbody tr:nth-child(odd) {
+            background-color: #f2f2f2;
+        }
+        .btn {
+            margin-right: 5px;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+    </style>
     <div th:replace="navbar.html"></div>
 </head>
 <body>
 <div class="container">
     <h1>List of Countries</h1>
-    <a class="btn btn-primary" th:href="@{/country/create}">Add country</a>
+    <a class="btn btn-primary mb-3" th:href="@{/country/create}">Add Country</a>
+    <canvas id="continentChart" width="400" height="100" class="mb-3"></canvas>
     <table class="table table-bordered">
         <thead class="thead-dark">
         <tr>
@@ -21,16 +38,15 @@
             <th scope="col">Actions</th>
         </tr>
         </thead>
-        <canvas id="continentChart" width="400" height="100"></canvas>
         <tbody>
         <tr th:each="country : ${listOfCountries}">
             <td th:text="${country.name}"></td>
             <td th:text="${country.continent}"></td>
             <td>
-                <img th:if="${country.flag != null}" th:src="'data:image/jpeg;base64,' + ${country.generateBase64Image()}" width="200" height="150" alt="Image" />
+                <img th:if="${country.flag != null}" th:src="'data:image/jpeg;base64,' + ${country.generateBase64Image()}" width="200" height="150" alt="Country Flag" />
             </td>
             <td>
-                <form th:action="@{/country/delete}" method="post">
+                <form th:action="@{/country/delete}" method="post" class="d-inline-block">
                     <input type="hidden" name="id" th:value="${country.id}" />
                     <button type="submit" class="btn btn-danger">Delete</button>
                 </form>
