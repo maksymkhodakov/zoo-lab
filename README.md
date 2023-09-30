@@ -12,7 +12,7 @@ This project is considered to be a combination of different technologies and app
 
 ---
 ### Google Drive
-This Google Drive is used to store all videos regarding all phases: [link](https://drive.google.com/drive/folders/1fBpfP7I5tSagGTB_iIcAeFuXVp8mpLth?usp=sharing)
+This Google Drive is used to store files such as: SEO analytics and Postman collections: [link](https://drive.google.com/drive/folders/1fBpfP7I5tSagGTB_iIcAeFuXVp8mpLth?usp=sharing)
 
 ---
 ### Postman
