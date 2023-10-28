@@ -4,16 +4,12 @@ import com.example.zoo.data.AnimalData;
 import com.example.zoo.dto.AnimalDTO;
 import com.example.zoo.entity.Animal;
 import com.example.zoo.search.dto.AnimalElasticDTO;
-import com.example.zoo.storage.service.StorageService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 
 @Component
-@RequiredArgsConstructor
 public class AnimalMapper {
-    private final StorageService storageService;
 
     public AnimalDTO entityToDto(final Animal animal) {
         return AnimalDTO.builder()
@@ -22,7 +18,7 @@ public class AnimalMapper {
                 .kindAnimal(animal.getKindAnimal())
                 .typePowerSupply(animal.getTypePowerSupply())
                 .venomous(animal.isVenomous())
-                .photo(storageService.downloadPhoto(animal.getPhotoPath()))
+                .photo(new byte[0])
                 .build();
     }
 
@@ -32,7 +28,7 @@ public class AnimalMapper {
                 .kindAnimal(animal.getKindAnimal())
                 .typePowerSupply(animal.getTypePowerSupply())
                 .venomous(animal.isVenomous())
-                .photoPath(storageService.uploadPhoto(multipartFile))
+                .photoPath(multipartFile.getOriginalFilename())
                 .build();
     }
 

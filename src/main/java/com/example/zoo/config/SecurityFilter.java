@@ -46,7 +46,8 @@ public class SecurityFilter {
                                 "/country/**",
                                 "/map/**",
                                 "/zoo/**",
-                                "/"
+                                "/api/**",
+                                "/**"
                                         )
                                 .permitAll()
                                 .anyRequest()
